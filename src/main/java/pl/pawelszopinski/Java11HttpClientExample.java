@@ -1,11 +1,14 @@
 package pl.pawelszopinski;
 
+import com.cedarsoftware.util.io.JsonWriter;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +20,8 @@ public class Java11HttpClientExample {
             .build();
 
     public static void main(String[] args) throws Exception {
+
+        System.out.println(Arrays.toString(args));
 
         Java11HttpClientExample obj = new Java11HttpClientExample();
 
@@ -34,17 +39,20 @@ public class Java11HttpClientExample {
                 .GET()
 //                .uri(URI.create("https://httpbin.org/get"))
 //                .setHeader("User-Agent", "Java 11 HttpClient Bot")
-                .uri(URI.create("https://api.github.com/repos/cschool-cinema/kinex/git/commits/9fa8b2ad225452fc8ccb18ae76472803f3bf807c"))
+                .uri(URI.create(
+                        "https://api.github.com/repos/cschool-cinema/kinex/git/commits" +
+                                "/9fa8b2ad225452fc8ccb18ae76472803f3bf807c"))
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        String formattedBody = JsonWriter.formatJson(response.body());
 
         // print status code
         System.out.println(response.statusCode());
 
         // print response body
-        System.out.println(response.body());
-
+        System.out.println(formattedBody);
     }
 
     private void sendPost() throws Exception {

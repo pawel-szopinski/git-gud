@@ -1,3 +1,5 @@
+https://www.baeldung.com/java-picocli-create-command-line-program
+
 Projekty indywidualne - do wyboru. Poziom trudności oceniony "na oko".
 Tym razem wszystkie aplikacje są aplikacjami konsolowymi, nie webowymi.
 Jeśli będziecie korzystać ze Springa polecamy CommandLineRunner.

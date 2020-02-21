@@ -1,7 +1,6 @@
 package pl.pawelszopinski;
 
 import com.cedarsoftware.util.io.JsonWriter;
-import org.apache.commons.cli.*;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -10,7 +9,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Java11HttpClientExample {
@@ -24,31 +22,14 @@ public class Java11HttpClientExample {
 
         Java11HttpClientExample obj = new Java11HttpClientExample();
 
-        Options options = CmdLineOptions.getInstance().getOptions();
-
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = parser.parse(options, args);
-
-        if (cmd.hasOption("commit-info")) {
-            List<String> repo = cmd.getArgList();
-
-            obj.sendGet(repo.get(1));
-        }
-
-        HelpFormatter hf = new HelpFormatter();
-        hf.printHelp("git", options);
-
 //        System.out.println("Testing 2 - Send Http POST request");
 //        obj.sendPost();
 
     }
 
     private void sendGet(String repository) throws Exception {
-
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-//                .uri(URI.create("https://httpbin.org/get"))
-//                .setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .uri(URI.create(
                         "https://api.github.com/repos/cschool-cinema/" + repository + "/git/commits" +
                                 "/9fa8b2ad225452fc8ccb18ae76472803f3bf807c"))
@@ -58,10 +39,6 @@ public class Java11HttpClientExample {
 
         String formattedBody = JsonWriter.formatJson(response.body());
 
-        // print status code
-//        System.out.println(response.statusCode());
-
-        // print response body
         System.out.println(formattedBody);
     }
 

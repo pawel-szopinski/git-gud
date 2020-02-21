@@ -1,29 +1,44 @@
 package pl.pawelszopinski.subcommand;
 
-import picocli.CommandLine;
-import pl.pawelszopinski.subcommand.util.HttpRequestProcessor;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Parameters;
+import pl.pawelszopinski.options.ReusableHelp;
+import pl.pawelszopinski.options.ReusableOwner;
+import pl.pawelszopinski.options.ReusableRepository;
+import pl.pawelszopinski.util.HttpRequestUtil;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name = "commit-info", aliases = "ci", mixinStandardHelpOptions = true)
+@Command(name = "commit-info", description = "Print info about one or more commits.")
 public class GetCommitInfo implements Callable<Integer> {
 
-    @CommandLine.Option(names = {"-o", "--owner"}, required = true, paramLabel = "ACCOUNT", description = "owner's " +
-            "account name")
-    private String owner;
+    @Mixin
+    private ReusableOwner owner;
 
-    @CommandLine.Option(names = {"-r", "--repository"}, required = true, paramLabel = "REPO", description =
-            "repository name")
-    private String repository;
+    @Mixin
+    private ReusableRepository repository;
 
-    @CommandLine.Option(names = {"-cs", "--commit-sha"}, description = "One or more commit SHAs.")
-    private List<String> shas;
+    @Parameters(arity = "1..*", description = "One or more commit SHAs.")
+    private String[] shaArray;
+
+    @Mixin
+    private ReusableHelp help;
 
     @Override
     public Integer call() throws Exception {
-        HttpRequestProcessor.printGet("https://api.github.com/repos/" + owner + "/" +
-                repository + "/git/commits/9fa8b2ad225452fc8ccb18ae76472803f3bf807c");
+        System.out.println();
+        System.out.println("====================================================================");
+        System.out.println();
+
+        for (String sha : shaArray) {
+            HttpRequestUtil.printGet("https://api.github.com/repos/" + owner.getOwner() + "/" +
+                    repository.getRepository() + "/git/commits/" + sha);
+
+            System.out.println();
+            System.out.println("====================================================================");
+            System.out.println();
+        }
 
         return 0;
     }

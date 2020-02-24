@@ -3,11 +3,12 @@ package pl.pawelszopinski.subcommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
-import pl.pawelszopinski.options.ReusableHelp;
-import pl.pawelszopinski.options.ReusableOwner;
-import pl.pawelszopinski.options.ReusableRepository;
-import pl.pawelszopinski.util.HttpRequestUtil;
+import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.util.HttpRequestProcessor;
+import pl.pawelszopinski.view.ConsoleDisplay;
+import pl.pawelszopinski.view.Displayable;
 
+import java.net.http.HttpResponse;
 import java.util.concurrent.Callable;
 
 @Command(name = "commit-info", description = "Print info about one or more commits.")
@@ -23,21 +24,29 @@ public class GetCommitInfo implements Callable<Integer> {
     private String[] shaArray;
 
     @Mixin
+    private ReusableUserName userName;
+
+    @Mixin
+    private ReusableToken token;
+
+    @Mixin
     private ReusableHelp help;
 
     @Override
     public Integer call() throws Exception {
-        System.out.println();
-        System.out.println("====================================================================");
-        System.out.println();
+        Displayable displayMethod = new ConsoleDisplay();
+
+        HttpRequestProcessor requestProc =
+                new HttpRequestProcessor(userName.getUserName(), token.getToken());
 
         for (String sha : shaArray) {
-            HttpRequestUtil.printGet("https://api.github.com/repos/" + owner.getOwner() + "/" +
-                    repository.getRepository() + "/git/commits/" + sha);
+            String uri = "repos/" + owner.getOwner() + "/" +
+                    repository.getRepository() + "/git/commits/" + sha;
 
-            System.out.println();
-            System.out.println("====================================================================");
-            System.out.println();
+            HttpResponse<String> response =
+                    requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString());
+
+            displayMethod.showJson(response);
         }
 
         return 0;

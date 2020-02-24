@@ -1,4 +1,4 @@
-package pl.pawelszopinski.options;
+package pl.pawelszopinski.option;
 
 import picocli.CommandLine.Option;
 

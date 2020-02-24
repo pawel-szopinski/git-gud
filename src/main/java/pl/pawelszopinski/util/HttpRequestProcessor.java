@@ -1,6 +1,8 @@
 package pl.pawelszopinski.util;
 
+import org.apache.commons.lang3.StringUtils;
 import pl.pawelszopinski.config.Configuration;
+import pl.pawelszopinski.view.ConsoleDisplay;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,20 +25,29 @@ public class HttpRequestProcessor {
         this.token = token;
     }
 
-    public <T> HttpResponse<T> sendGet(String uri, HttpResponse.BodyHandler<T> bodyType)
+    public <T> HttpResponse<T> sendGet(String uri, HttpResponse.BodyHandler<T> bodyType, boolean authenticate)
             throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest.Builder httpBuilder = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(Configuration.getApiAddress() + uri))
-                .header(Configuration.getHeaderName(), Configuration.getHeaderValue())
-                .header("Authorization", basicAuth())
-                .build();
+                .header("Accept", Configuration.getAcceptHeader());
+
+        if (authenticate) {
+            httpBuilder.header("Authorization", basicAuth());
+        }
+
+        HttpRequest request = httpBuilder.build();
 
         return HTTP_CLIENT.send(request, bodyType);
     }
 
     private String basicAuth() {
-        if (userName == null || token == null) return "";
+        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(token)) {
+            new ConsoleDisplay().showWarning("Authentication flag was present, " +
+                    "but login details are missing in properties file!");
+
+            return "";
+        }
 
         return "Basic " + Base64.getEncoder().encodeToString((userName + ":" + token).getBytes());
     }

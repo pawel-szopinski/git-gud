@@ -12,12 +12,15 @@ import java.util.Properties;
 public class Configuration {
 
     private static final String CONFIG_FILE = "/git-gud.properties";
+    private static final String ADDRESS_KEY = "api.address";
+    private static final String ACCEPT_HDR_KEY = "api.accept-header";
+    private static final String USER_KEY = "user.name";
+    private static final String TOKEN_KEY = "user.token";
 
     private static String apiAddress;
-    private static String headerName;
-    private static String headerValue;
+    private static String acceptHeader;
     private static String userName;
-    private static String userPassword;
+    private static String userToken;
 
     private Configuration() {
     }
@@ -30,20 +33,12 @@ public class Configuration {
         Configuration.apiAddress = apiAddress;
     }
 
-    public static String getHeaderName() {
-        return headerName;
+    public static String getAcceptHeader() {
+        return acceptHeader;
     }
 
-    private static void setHeaderName(String headerName) {
-        Configuration.headerName = headerName;
-    }
-
-    public static String getHeaderValue() {
-        return headerValue;
-    }
-
-    private static void setHeaderValue(String headerValue) {
-        Configuration.headerValue = headerValue;
+    private static void setAcceptHeader(String acceptHeader) {
+        Configuration.acceptHeader = acceptHeader;
     }
 
     public static String getUserName() {
@@ -54,17 +49,17 @@ public class Configuration {
         Configuration.userName = userName;
     }
 
-    public static String getUserPassword() {
-        return userPassword;
+    public static String getUserToken() {
+        return userToken;
     }
 
-    private static void setUserPassword(String userPassword) {
-        Configuration.userPassword = userPassword;
+    private static void setUserToken(String userToken) {
+        Configuration.userToken = userToken;
     }
 
     public static void readFromFile() throws IOException, InvalidParameterException {
         File jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String propertiesPath = jarPath.getParent();
+        String propertiesPath = jarPath.getParent().replaceAll("%20", " ");
 
         InputStream input = new FileInputStream(propertiesPath + CONFIG_FILE);
 
@@ -72,10 +67,9 @@ public class Configuration {
 
         props.load(input);
 
-        setApiAddress(props.getProperty("api.address"));
-        setHeaderName(props.getProperty("api.header.name"));
-        setHeaderValue(props.getProperty("api.header.value"));
-        setUserName(props.getProperty("user.name"));
-        setUserPassword(props.getProperty("user.password"));
+        setApiAddress(props.getProperty(ADDRESS_KEY).trim());
+        setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY).trim());
+        setUserName(props.getProperty(USER_KEY).trim());
+        setUserToken(props.getProperty(TOKEN_KEY).trim());
     }
 }

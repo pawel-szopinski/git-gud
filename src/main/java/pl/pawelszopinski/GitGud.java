@@ -19,13 +19,14 @@ public class GitGud implements Callable<Integer> {
     public static void main(String[] args) {
 
         loadProperties();
-//
-//        int exitCode = new CommandLine(new GitGud()).execute(
-//                "commit-info", "-o", "cschool-cinema", "-r", "kinex", "9fa8b2ad225452fc8ccb18ae76472803f3bf807c",
-//                "x");
 
         int exitCode = new CommandLine(new GitGud()).execute(
-                "commit-info", "-o", "pawel-szopinski", "-r", "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92");
+                "commit-info", "-o", "cschool-cinema", "-r", "kinex", "9fa8b2ad225452fc8ccb18ae76472803f3bf807c",
+                "-a");
+
+//        int exitCode = new CommandLine(new GitGud()).execute(
+//                "commit-info", "-o", "pawel-szopinski", "-r", "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92",
+//                "-a");
 
 //        int exitCode = new CommandLine(new GitGud()).execute("-V");
         System.exit(exitCode);

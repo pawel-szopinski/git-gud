@@ -6,4 +6,6 @@ public interface Displayable {
     void showJson(HttpResponse<String> response);
 
     void showErrorMsg(String msg);
+
+    void showWarning(String msg);
 }

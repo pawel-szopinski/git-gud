@@ -2,7 +2,7 @@ package pl.pawelszopinski.option;
 
 import picocli.CommandLine.Option;
 
-public class ReusableOwner {
+public class Owner {
     @Option(names = {"-o", "--owner"}, required = true, paramLabel = "<name>", description = "Owner's " +
             "account name.")
     private String owner;

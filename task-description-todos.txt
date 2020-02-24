@@ -9,7 +9,7 @@ Dodam tylko że zamiast zasad RESTa, fajnie by poczytać albo poanalizować jak 
 (konwencja -- lub - etc). Git jest fajnym przykładem - zerknijcie jak wyglądaja komendy które wykonywaliśmy.
 Pomocna może tu być jedna z bibliotek do parsowania podawanych parametrów (argsy). Na przykład: https://commons.apache.org/proper/commons-cli/
 łatwe:
-- aplikacja podobna do zleconych wcześniej (bookstore,todo czy tych z projetków grupowych) ale z interfejsem konsolowym zamiast web. Podstawowe operacje jak dodanie/usuwanie/listowanie/aktualizacja produktu/ksiażki/zadania/seansu. Dane logowania i lokalizacja bazy danych powinna być podawana w osobnym pliku .properties w tym samym folderze co plik .jar (external configuration)
+- aplikacja podobna do zleconych wcześniej (bookstore,to do czy tych z projetków grupowych) ale z interfejsem konsolowym zamiast web. Podstawowe operacje jak dodanie/usuwanie/listowanie/aktualizacja produktu/ksiażki/zadania/seansu. Dane logowania i lokalizacja bazy danych powinna być podawana w osobnym pliku .properties w tym samym folderze co plik .jar (external configuration)
 Przykład dodania ksiązki: jar bookstore.jar add-book -name 'Author' -title 'Tytul' -pages 322 (nie musi być identycznie, to tylko przykład)
 średnie:
 - narzędzie exportujące zawartość bazy danych do pliku csv/excel. Znów dane logowania i lokalizacja bazy danych w pliku konfiguracyjnym. W parametrze aplikacji przekazujemy nazwy tabel i filtry (np. liczba wierszy, kolejność malejąca lub rosnąca, a nawet proste filtry <to trudniejsze>). Format i lokalizacja pliku podawany także w parametrach (csv, xslx lub inne). Opcjonalnie możliwość uploadu na serwer FTP (prócz ścieżki, dodajemy adres serwera)
@@ -22,11 +22,16 @@ Brak tematu dla Ciebie? Nic starconego!!!! xD a tak serio to jeśli powyższe te
 Wyszukiwanie lotów, info o zwierzętach i moje ulubione - meme generator (np. https://api.imgflip.com/) xD Odpadają aplikacje które będą mieć tylko jedna prostą funkcje - np. zwróc losowy żart. No i nie gwarantuje że API które są na tej liście są dobrze udokumentowane i działają :) W przypadku wyboru własnego API - dajcie znać jak najszybciej co wybraliście.
 
 
+autocomplete
+auth warning shown multiple times when multiple http requests are processed at once
 subcommands - auto added from package?
 ascii logo and help when no params
 async httprequest
+version (main class) from Maven?
 
 
 questions:
 1. static configuration class?
 2. display method ok?
+3. system.exit ok in main class (error handling)?
+4. do I need json parsing?

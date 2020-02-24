@@ -10,6 +10,8 @@ class PropertiesExtended extends Properties {
     public String getProperty(String key) throws InvalidParameterException {
         String property = super.getProperty(key);
 
+        if (property != null) property = property.trim();
+
         if (property == null && key.startsWith("api.")) {
             throw new InvalidParameterException(
                     MessageFormat.format("Missing value for key {0}!", key));

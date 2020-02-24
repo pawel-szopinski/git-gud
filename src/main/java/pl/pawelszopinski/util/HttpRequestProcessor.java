@@ -32,8 +32,12 @@ public class HttpRequestProcessor {
                 .uri(URI.create(Configuration.getApiAddress() + uri))
                 .header("Accept", Configuration.getAcceptHeader());
 
-        if (authenticate) {
+        if (authenticate && StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(token)) {
             httpBuilder.header("Authorization", basicAuth());
+        } else if (authenticate && (StringUtils.isBlank(userName) || StringUtils.isBlank(token))) {
+            new ConsoleDisplay().showWarning("Authentication flag was present, " +
+                    "but login details are missing in properties file. If the data you are trying " +
+                    "to query is not public, you will receive not found error.");
         }
 
         HttpRequest request = httpBuilder.build();
@@ -42,13 +46,6 @@ public class HttpRequestProcessor {
     }
 
     private String basicAuth() {
-        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(token)) {
-            new ConsoleDisplay().showWarning("Authentication flag was present, " +
-                    "but login details are missing in properties file!");
-
-            return "";
-        }
-
         return "Basic " + Base64.getEncoder().encodeToString((userName + ":" + token).getBytes());
     }
 }

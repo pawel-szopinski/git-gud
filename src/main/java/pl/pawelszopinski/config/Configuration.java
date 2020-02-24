@@ -67,9 +67,9 @@ public class Configuration {
 
         props.load(input);
 
-        setApiAddress(props.getProperty(ADDRESS_KEY).trim());
-        setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY).trim());
-        setUserName(props.getProperty(USER_KEY).trim());
-        setUserToken(props.getProperty(TOKEN_KEY).trim());
+        setApiAddress(props.getProperty(ADDRESS_KEY));
+        setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY));
+        setUserName(props.getProperty(USER_KEY));
+        setUserToken(props.getProperty(TOKEN_KEY));
     }
 }

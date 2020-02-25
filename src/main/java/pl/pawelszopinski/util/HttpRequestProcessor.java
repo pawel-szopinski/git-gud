@@ -14,7 +14,7 @@ import java.util.Base64;
 public class HttpRequestProcessor {
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_2)
+            .version(HttpClient.Version.HTTP_1_1)
             .build();
 
     private final String userName;

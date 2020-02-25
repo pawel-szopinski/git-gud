@@ -22,10 +22,10 @@ public class GitGud implements Callable<Integer> {
 
         loadProperties();
 
-        int exitCode = new CommandLine(new GitGud()).execute(args);
+//        int exitCode = new CommandLine(new GitGud()).execute(args);
 
-//        int exitCode = new CommandLine(new GitGud()).execute(
-//                "stargazers", "-o", "cschool-cinema", "-r", "kinex", "-a");
+        int exitCode = new CommandLine(new GitGud()).execute(
+                "stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu");
 //
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-h");

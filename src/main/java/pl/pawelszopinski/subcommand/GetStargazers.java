@@ -1,8 +1,10 @@
 package pl.pawelszopinski.subcommand;
 
+import com.google.gson.Gson;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import pl.pawelszopinski.config.Configuration;
+import pl.pawelszopinski.entity.User;
 import pl.pawelszopinski.option.Authenticate;
 import pl.pawelszopinski.option.Help;
 import pl.pawelszopinski.option.Owner;
@@ -37,10 +39,20 @@ public class GetStargazers implements Callable<Integer> {
                 new HttpRequestProcessor(Configuration.getUserName(), Configuration.getUserToken());
 
         String uri = "repos/" + owner.getOwner() + "/" +
-                repository.getRepository() + "/stargazers";
+                repository.getRepository() + "/stargazers?per_page=100";
 
         HttpResponse<String> response =
                 requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
+
+        String linkHeader = response.headers().firstValue("link").orElse(null);
+
+        Gson gson = new Gson();
+
+        User[] userArray = gson.fromJson(response.body(), User[].class);
+
+        for (User user : userArray) {
+            System.out.println(user);
+        }
 
         displayMethod.showJson(response);
 

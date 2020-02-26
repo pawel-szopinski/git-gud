@@ -4,13 +4,10 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 import pl.pawelszopinski.config.Configuration;
-import pl.pawelszopinski.option.Authenticate;
-import pl.pawelszopinski.option.Help;
-import pl.pawelszopinski.option.Owner;
-import pl.pawelszopinski.option.Repository;
-import pl.pawelszopinski.util.HttpRequestProcessor;
-import pl.pawelszopinski.view.ConsoleDisplay;
-import pl.pawelszopinski.view.Displayable;
+import pl.pawelszopinski.http.HttpRequestService;
+import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.view.ConsoleDisplayService;
+import pl.pawelszopinski.view.DisplayService;
 
 import java.net.http.HttpResponse;
 import java.util.concurrent.Callable;
@@ -31,14 +28,17 @@ public class GetCommitInfo implements Callable<Integer> {
     private Authenticate auth;
 
     @Mixin
+    private Verbose verbose;
+
+    @Mixin
     private Help help;
 
     @Override
     public Integer call() throws Exception {
-        Displayable displayMethod = new ConsoleDisplay();
+        DisplayService displayMethod = new ConsoleDisplayService();
 
-        HttpRequestProcessor requestProc =
-                new HttpRequestProcessor(Configuration.getUserName(), Configuration.getUserToken());
+        HttpRequestService requestProc =
+                new HttpRequestService(Configuration.getUserName(), Configuration.getUserToken());
 
         for (String sha : shaArray) {
             String uri = "repos/" + owner.getOwner() + "/" +
@@ -47,7 +47,7 @@ public class GetCommitInfo implements Callable<Integer> {
             HttpResponse<String> response =
                     requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
 
-            displayMethod.showJson(response);
+            displayMethod.showJson(response.body());
         }
 
         return 0;

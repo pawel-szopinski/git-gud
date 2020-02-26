@@ -4,8 +4,8 @@ import picocli.CommandLine;
 import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.subcommand.GetCommitInfo;
 import pl.pawelszopinski.subcommand.GetStargazers;
-import pl.pawelszopinski.view.ConsoleDisplay;
-import pl.pawelszopinski.view.Displayable;
+import pl.pawelszopinski.view.ConsoleDisplayService;
+import pl.pawelszopinski.view.DisplayService;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -23,9 +23,12 @@ public class GitGud implements Callable<Integer> {
         loadProperties();
 
 //        int exitCode = new CommandLine(new GitGud()).execute(args);
-
+//
         int exitCode = new CommandLine(new GitGud()).execute(
-                "stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu");
+                "stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-v");
+
+//        int exitCode = new CommandLine(new GitGud()).execute(
+//                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");
 //
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-h");
@@ -50,17 +53,17 @@ public class GitGud implements Callable<Integer> {
     }
 
     private static void loadProperties() {
-        Displayable display = new ConsoleDisplay();
+        DisplayService display = new ConsoleDisplayService();
 
         try {
             Configuration.readFromFile();
         } catch (IOException e) {
-            display.showErrorMsg("Error reading application properties file! " +
+            display.showError("Error reading application properties file! " +
                     "Make sure that it exists in the same directory as JAR file.");
-            display.showErrorMsg("Message: " + e.getMessage());
+            display.showError("Message: " + e.getMessage());
             System.exit(1);
         } catch (InvalidParameterException e) {
-            display.showErrorMsg("Error reading application property values. Message: " + e.getMessage());
+            display.showError("Error reading application property values. Message: " + e.getMessage());
             System.exit(1);
         }
     }

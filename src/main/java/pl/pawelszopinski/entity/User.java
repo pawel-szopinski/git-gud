@@ -1,6 +1,6 @@
 package pl.pawelszopinski.entity;
 
-public class User {
+public class User implements Comparable<User> {
 
     private int id;
     private String login;
@@ -32,6 +32,15 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", login=" + login + ", type=" + type + "]";
+        return "User [login=" + login + ", id=" + id + ", type=" + type + "]";
+    }
+
+    @Override
+    public int compareTo(User o) {
+        if (this == o) {
+            return 0;
+        }
+
+        return this.login.compareToIgnoreCase(o.login);
     }
 }

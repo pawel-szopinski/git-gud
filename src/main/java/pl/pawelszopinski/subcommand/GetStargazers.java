@@ -1,17 +1,16 @@
 package pl.pawelszopinski.subcommand;
 
 import com.google.gson.Gson;
+import org.apache.http.HttpStatus;
+import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.entity.User;
-import pl.pawelszopinski.option.Authenticate;
-import pl.pawelszopinski.option.Help;
-import pl.pawelszopinski.option.Owner;
-import pl.pawelszopinski.option.Repository;
-import pl.pawelszopinski.util.HttpRequestProcessor;
-import pl.pawelszopinski.view.ConsoleDisplay;
-import pl.pawelszopinski.view.Displayable;
+import pl.pawelszopinski.http.HttpRequestService;
+import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.view.ConsoleDisplayService;
+import pl.pawelszopinski.view.DisplayService;
 
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -32,50 +31,58 @@ public class GetStargazers implements Callable<Integer> {
     private Authenticate auth;
 
     @Mixin
+    private Verbose verbose;
+
+    @Mixin
     private Help help;
+
+    private final DisplayService displaySvc = new ConsoleDisplayService();
+    private final HttpRequestService requestProc =
+            new HttpRequestService(Configuration.getUserName(), Configuration.getUserToken());
+    private final Gson gson = new Gson();
+    private String linkHeader = "";
+    private HttpResponse<String> response;
+    private StringBuilder combinedJsons = new StringBuilder();
+    private List<User> userList = new ArrayList<>();
 
     @Override
     public Integer call() throws Exception {
-        Displayable displayMethod = new ConsoleDisplay();
+        int i = 1;
 
-        HttpRequestProcessor requestProc =
-                new HttpRequestProcessor(Configuration.getUserName(), Configuration.getUserToken());
-
-        String uri = "repos/" + owner.getOwner() + "/" +
-                repository.getRepository() + "/stargazers?per_page=100";
-
-        HttpResponse<String> response =
-                requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
-
-        String linkHeader = response.headers().firstValue("link").orElse(null);
-
-        Gson gson = new Gson();
-
-        User[] userArray = gson.fromJson(response.body(), User[].class);
-
-        List<User> userList = new ArrayList<>(Arrays.asList(userArray));
-
-        int i = 2;
         while (linkHeader != null && !linkHeader.endsWith("rel=\"first\"")) {
-            uri = "repos/" + owner.getOwner() + "/" +
-                    repository.getRepository() + "/stargazers?per_page=100&page=" + i;
+            String uri = "repos/" + owner.getOwner() + "/" +
+                    repository.getRepository() + "/stargazers?per_page=30&page=" + i;
 
             response = requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
 
+            if (response.statusCode() != HttpStatus.SC_OK) {
+                displaySvc.showError("HTTP error: " + response.statusCode() + ", " +
+                        EnglishReasonPhraseCatalog.INSTANCE.getReason(response.statusCode(), null));
+                return response.statusCode();
+            }
+
             linkHeader = response.headers().firstValue("link").orElse(null);
 
-            userList.addAll(Arrays.asList(gson.fromJson(response.body(), User[].class)));
+            if (verbose.isVerbose()) {
+                compileVerboseResult(linkHeader, i);
+            } else {
+                compileListResult(response.body());
+            }
 
             i++;
         }
 
-        for (User user : userList) {
-            System.out.println(user);
-        }
+//        displaySvc.showJson(combinedJsons.toString());
 
-//        displayMethod.showJson(response);
+        return HttpStatus.SC_OK;
+    }
 
-        return 0;
+    private void compileVerboseResult(String linkHeader, int page) {
+        combinedJsons.append(response.body());
+    }
+
+    private void compileListResult(String body) {
+        userList.addAll(Arrays.asList(gson.fromJson(body, User[].class)));
     }
 }
 

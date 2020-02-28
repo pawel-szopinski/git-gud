@@ -18,18 +18,26 @@ import java.util.concurrent.Callable;
         subcommands = {GetCommitInfo.class, GetStargazers.class})
 public class GitGud implements Callable<Integer> {
 
+    private static final DisplayService DISPLAY_SVC = new ConsoleDisplayService();
+
     public static void main(String[] args) {
 
         loadProperties();
 
+        int exitCode = 0;
+
 //        int exitCode = new CommandLine(new GitGud()).execute(args);
 //
-        int exitCode = new CommandLine(new GitGud()).execute(
-                "stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-v");
+        try {
+            exitCode = new CommandLine(new GitGud()).execute(
+                    "stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-a");
+        } catch (Exception e) {
+            DISPLAY_SVC.showError("Message: " + e.getMessage());
+        }
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");
-//
+
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-h");
 
@@ -53,17 +61,16 @@ public class GitGud implements Callable<Integer> {
     }
 
     private static void loadProperties() {
-        DisplayService display = new ConsoleDisplayService();
-
         try {
             Configuration.readFromFile();
         } catch (IOException e) {
-            display.showError("Error reading application properties file! " +
+            DISPLAY_SVC.showError("Error reading application properties file! " +
                     "Make sure that it exists in the same directory as JAR file.");
-            display.showError("Message: " + e.getMessage());
+            DISPLAY_SVC.showError("Message: " + e.getMessage());
             System.exit(1);
         } catch (InvalidParameterException e) {
-            display.showError("Error reading application property values. Message: " + e.getMessage());
+            DISPLAY_SVC.showError("Error reading application property values.");
+            DISPLAY_SVC.showError("Message: " + e.getMessage());
             System.exit(1);
         }
     }

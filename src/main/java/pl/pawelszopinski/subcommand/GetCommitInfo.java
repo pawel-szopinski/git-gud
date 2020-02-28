@@ -4,8 +4,8 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 import pl.pawelszopinski.config.Configuration;
-import pl.pawelszopinski.http.HttpRequestService;
 import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.service.HttpRequestService;
 import pl.pawelszopinski.view.ConsoleDisplayService;
 import pl.pawelszopinski.view.DisplayService;
 

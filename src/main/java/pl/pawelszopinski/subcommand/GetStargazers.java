@@ -7,8 +7,8 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.entity.User;
-import pl.pawelszopinski.http.HttpRequestService;
 import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.service.HttpRequestService;
 import pl.pawelszopinski.view.ConsoleDisplayService;
 import pl.pawelszopinski.view.DisplayService;
 
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Command(name = "stargazers", description = "Print users starring a given repository.")
 public class GetStargazers implements Callable<Integer> {
@@ -37,23 +39,24 @@ public class GetStargazers implements Callable<Integer> {
     private Help help;
 
     private final DisplayService displaySvc = new ConsoleDisplayService();
-    private final HttpRequestService requestProc =
+    private final HttpRequestService httpRequest =
             new HttpRequestService(Configuration.getUserName(), Configuration.getUserToken());
     private final Gson gson = new Gson();
-    private String linkHeader = "";
-    private HttpResponse<String> response;
-    private StringBuilder combinedJsons = new StringBuilder();
-    private List<User> userList = new ArrayList<>();
 
     @Override
     public Integer call() throws Exception {
-        int i = 1;
+        HttpResponse<String> response;
+        StringBuilder combinedJsons = new StringBuilder();
+        List<User> userList = new ArrayList<>();
+        String linkHeader;
 
-        while (linkHeader != null && !linkHeader.endsWith("rel=\"first\"")) {
+        int pageNo = 1;
+
+        do {
             String uri = "repos/" + owner.getOwner() + "/" +
-                    repository.getRepository() + "/stargazers?per_page=30&page=" + i;
+                    repository.getRepository() + "/stargazers?per_page=30&page=" + pageNo;
 
-            response = requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
+            response = httpRequest.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
 
             if (response.statusCode() != HttpStatus.SC_OK) {
                 displaySvc.showError("HTTP error: " + response.statusCode() + ", " +
@@ -64,25 +67,36 @@ public class GetStargazers implements Callable<Integer> {
             linkHeader = response.headers().firstValue("link").orElse(null);
 
             if (verbose.isVerbose()) {
-                compileVerboseResult(linkHeader, i);
+                compileVerboseResult(combinedJsons, response.body());
             } else {
-                compileListResult(response.body());
+                compileListResult(userList, response.body());
             }
 
-            i++;
-        }
+            pageNo++;
+        } while (linkHeader != null && getLastPage(linkHeader) >= pageNo);
 
 //        displaySvc.showJson(combinedJsons.toString());
 
         return HttpStatus.SC_OK;
     }
 
-    private void compileVerboseResult(String linkHeader, int page) {
-        combinedJsons.append(response.body());
+    private void compileVerboseResult(StringBuilder combinedJsons, String responseBody) {
+        combinedJsons.append(responseBody);
     }
 
-    private void compileListResult(String body) {
+    private void compileListResult(List<User> userList, String body) {
         userList.addAll(Arrays.asList(gson.fromJson(body, User[].class)));
+    }
+
+    private int getLastPage(String linkHeader) {
+        Pattern p = Pattern.compile("page=\\d+>; rel=\"last\"");
+        Matcher m = p.matcher(linkHeader);
+
+        if (!m.find()) {
+            return 0;
+        }
+
+        return Integer.parseInt(m.group().replaceAll("[^\\d]", ""));
     }
 }
 

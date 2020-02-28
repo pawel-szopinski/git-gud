@@ -1,14 +1,14 @@
-package pl.pawelszopinski.http;
+package pl.pawelszopinski.service;
 
 import org.apache.commons.lang3.StringUtils;
 import pl.pawelszopinski.config.Configuration;
-import pl.pawelszopinski.view.ConsoleDisplayService;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.InvalidParameterException;
 import java.util.Base64;
 
 public class HttpRequestService {
@@ -43,8 +43,8 @@ public class HttpRequestService {
         if (authenticate && StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(token)) {
             httpBuilder.header("Authorization", basicAuth());
         } else if (authenticate && (StringUtils.isBlank(userName) || StringUtils.isBlank(token))) {
-            new ConsoleDisplayService().showWarning("Authentication flag was present, " +
-                    "but login details are missing in properties file.");
+            throw new InvalidParameterException("Authentication flag was present, " +
+                    "but login details are missing/incomplete.");
         }
     }
 

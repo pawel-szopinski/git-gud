@@ -23,15 +23,18 @@ Wyszukiwanie lotów, info o zwierzętach i moje ulubione - meme generator (np. h
 
 
 autocomplete
-auth warning shown multiple times when multiple http requests are processed at once
 subcommands - auto added from package?
 ascii logo and help when no params
 async httprequest
 version (main class) from Maven?
 
+typy zwracanych danych:
+1. pojedynczy rekord/json
+2. tablica rekordow/jsonow
+3. wiele tablic rekordow/jsonow
 
 questions:
 1. static configuration class?
 2. display method ok?
 3. system.exit ok in main class (error handling)?
-4. do I need json parsing?
+4. result as superclass or just use List<Object>?

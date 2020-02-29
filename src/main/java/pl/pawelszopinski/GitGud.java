@@ -2,12 +2,13 @@ package pl.pawelszopinski;
 
 import picocli.CommandLine;
 import pl.pawelszopinski.config.Configuration;
+import pl.pawelszopinski.handler.CmdLineExceptionMsgHandler;
+import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.subcommand.GetCommitInfo;
 import pl.pawelszopinski.subcommand.GetStargazers;
-import pl.pawelszopinski.view.ConsoleDisplayService;
-import pl.pawelszopinski.view.DisplayService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 import java.util.concurrent.Callable;
 
@@ -18,22 +19,15 @@ import java.util.concurrent.Callable;
         subcommands = {GetCommitInfo.class, GetStargazers.class})
 public class GitGud implements Callable<Integer> {
 
-    private static final DisplayService DISPLAY_SVC = new ConsoleDisplayService();
-
     public static void main(String[] args) {
 
         loadProperties();
 
-        int exitCode = 0;
-
 //        int exitCode = new CommandLine(new GitGud()).execute(args);
-//
-        try {
-            exitCode = new CommandLine(new GitGud()).execute(
-                    "stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-a");
-        } catch (Exception e) {
-            DISPLAY_SVC.showError("Message: " + e.getMessage());
-        }
+
+//        int exitCode = new CommandLine(new GitGud())
+//                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
+//                .execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");
@@ -41,22 +35,25 @@ public class GitGud implements Callable<Integer> {
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-h");
 
-//        int exitCode = new CommandLine(new GitGud()).execute(
-//                "commit-info", "-o", "pawel-szopinski", "-r", "implementers-toolbox",
-//                "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
-//                "8fe850f5a5c339e462f682890892846fb02b29b4", "-a");
+        int exitCode = new CommandLine(new GitGud())
+                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
+                .execute("commit-info", "-o", "pawel-szopinski", "-r", "implementers-toolbox",
+                        "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
+                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "commit-info", "-o", "pawel-szopinski", "-r", "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92",
 //                "-a");
 
 //        int exitCode = new CommandLine(new GitGud()).execute("commit-info", "-h");
+
         System.exit(exitCode);
     }
 
     @Override
     public Integer call() {
         CommandLine.usage(this, System.out);
+
         return 0;
     }
 
@@ -64,13 +61,16 @@ public class GitGud implements Callable<Integer> {
         try {
             Configuration.readFromFile();
         } catch (IOException e) {
-            DISPLAY_SVC.showError("Error reading application properties file! " +
+            PrintHandler.printException("Could not read application properties file! " +
                     "Make sure that it exists in the same directory as JAR file.");
-            DISPLAY_SVC.showError("Message: " + e.getMessage());
+            PrintHandler.printException("Additional info - " + e.getMessage());
             System.exit(1);
         } catch (InvalidParameterException e) {
-            DISPLAY_SVC.showError("Error reading application property values.");
-            DISPLAY_SVC.showError("Message: " + e.getMessage());
+            PrintHandler.printException("Could not read application property values.");
+            PrintHandler.printException("Additional info - " + e.getMessage());
+            System.exit(1);
+        } catch (URISyntaxException e) {
+            PrintHandler.printException(e.getMessage());
             System.exit(1);
         }
     }

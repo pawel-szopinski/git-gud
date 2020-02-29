@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 import java.util.Properties;
 
@@ -57,9 +58,9 @@ public class Configuration {
         Configuration.userToken = userToken;
     }
 
-    public static void readFromFile() throws IOException, InvalidParameterException {
-        File jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String propertiesPath = jarPath.getParent().replaceAll("%20", " ");
+    public static void readFromFile() throws IOException, InvalidParameterException, URISyntaxException {
+        File jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        String propertiesPath = jarPath.getParent();
 
         InputStream input = new FileInputStream(propertiesPath + CONFIG_FILE);
 
@@ -67,6 +68,10 @@ public class Configuration {
 
         props.load(input);
 
+        assignValues(props);
+    }
+
+    private static void assignValues(Properties props) {
         setApiAddress(props.getProperty(ADDRESS_KEY));
         setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY));
         setUserName(props.getProperty(USER_KEY));

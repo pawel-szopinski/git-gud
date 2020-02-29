@@ -3,17 +3,21 @@ package pl.pawelszopinski.subcommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
-import pl.pawelszopinski.config.Configuration;
+import pl.pawelszopinski.entity.ParsedResult;
+import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
-import pl.pawelszopinski.service.HttpRequestService;
-import pl.pawelszopinski.view.ConsoleDisplayService;
-import pl.pawelszopinski.view.DisplayService;
+import pl.pawelszopinski.result.ParsedArrayResultCompiler;
+import pl.pawelszopinski.result.VerboseArrayResultCompiler;
 
-import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @Command(name = "commit-info", description = "Print info about one or more commits.")
 public class GetCommitInfo implements Callable<Integer> {
+
+    private final static String URI_ITEM_REPLACEMENT = "{commit_sha}";
+
+    private String uri = "repos/{owner}/{repo}/git/commits/{commit_sha}";
 
     @Mixin
     private Owner owner;
@@ -35,21 +39,33 @@ public class GetCommitInfo implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        DisplayService displayMethod = new ConsoleDisplayService();
+        uri = uri.replace("{owner}", owner.getOwner())
+                .replace("{repo}", repository.getRepository());
 
-        HttpRequestService requestProc =
-                new HttpRequestService(Configuration.getUserName(), Configuration.getUserToken());
+        if (verbose.isVerbose()) {
+            String result = getVerboseResult();
 
-        for (String sha : shaArray) {
-            String uri = "repos/" + owner.getOwner() + "/" +
-                    repository.getRepository() + "/git/commits/" + sha;
+            PrintHandler.printJson(result);
+        } else {
+            List<ParsedResult> result = getParsedResult();
 
-            HttpResponse<String> response =
-                    requestProc.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
-
-            displayMethod.showJson(response.body());
+            PrintHandler.printParsedResult(result);
         }
 
         return 0;
+    }
+
+    private String getVerboseResult() throws Exception {
+        VerboseArrayResultCompiler resultCompiler = new VerboseArrayResultCompiler(
+                uri, URI_ITEM_REPLACEMENT, shaArray, auth.isAuth());
+
+        return resultCompiler.compileJsonResult();
+    }
+
+    private List<ParsedResult> getParsedResult() throws Exception {
+        ParsedArrayResultCompiler resultCompiler = new ParsedArrayResultCompiler(
+                uri, URI_ITEM_REPLACEMENT, shaArray, auth.isAuth());
+
+        return resultCompiler.compileParsedResult();
     }
 }

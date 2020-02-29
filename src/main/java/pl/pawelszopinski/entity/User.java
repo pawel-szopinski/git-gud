@@ -1,6 +1,6 @@
 package pl.pawelszopinski.entity;
 
-public class User implements Comparable<User> {
+public class User extends ParsedResult implements Comparable<User> {
 
     private int id;
     private String login;

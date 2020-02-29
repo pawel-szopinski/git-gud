@@ -7,10 +7,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.entity.User;
+import pl.pawelszopinski.handler.HttpRequestHandler;
+import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
-import pl.pawelszopinski.service.HttpRequestService;
-import pl.pawelszopinski.view.ConsoleDisplayService;
-import pl.pawelszopinski.view.DisplayService;
 
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -38,10 +37,9 @@ public class GetStargazers implements Callable<Integer> {
     @Mixin
     private Help help;
 
-    private final DisplayService displaySvc = new ConsoleDisplayService();
-    private final HttpRequestService httpRequest =
-            new HttpRequestService(Configuration.getUserName(), Configuration.getUserToken());
-    private final Gson gson = new Gson();
+    private final HttpRequestHandler httpRequest =
+            new HttpRequestHandler(Configuration.getUserName(), Configuration.getUserToken());
+    private static final Gson gson = new Gson();
 
     @Override
     public Integer call() throws Exception {
@@ -54,12 +52,12 @@ public class GetStargazers implements Callable<Integer> {
 
         do {
             String uri = "repos/" + owner.getOwner() + "/" +
-                    repository.getRepository() + "/stargazers?per_page=30&page=" + pageNo;
+                    repository.getRepository() + "/stargazers?per_page=100&page=" + pageNo;
 
             response = httpRequest.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
 
             if (response.statusCode() != HttpStatus.SC_OK) {
-                displaySvc.showError("HTTP error: " + response.statusCode() + ", " +
+                PrintHandler.printException("HTTP error: " + response.statusCode() + ", " +
                         EnglishReasonPhraseCatalog.INSTANCE.getReason(response.statusCode(), null));
                 return response.statusCode();
             }
@@ -67,24 +65,25 @@ public class GetStargazers implements Callable<Integer> {
             linkHeader = response.headers().firstValue("link").orElse(null);
 
             if (verbose.isVerbose()) {
-                compileVerboseResult(combinedJsons, response.body());
+                compileJsonResult(combinedJsons, response.body());
             } else {
-                compileListResult(userList, response.body());
+                compileParsedResult(userList, response.body());
             }
 
             pageNo++;
         } while (linkHeader != null && getLastPage(linkHeader) >= pageNo);
 
+        PrintHandler.printParsedResult(userList);
 //        displaySvc.showJson(combinedJsons.toString());
 
-        return HttpStatus.SC_OK;
+        return 0;
     }
 
-    private void compileVerboseResult(StringBuilder combinedJsons, String responseBody) {
+    private void compileJsonResult(StringBuilder combinedJsons, String responseBody) {
         combinedJsons.append(responseBody);
     }
 
-    private void compileListResult(List<User> userList, String body) {
+    private void compileParsedResult(List<User> userList, String body) {
         userList.addAll(Arrays.asList(gson.fromJson(body, User[].class)));
     }
 

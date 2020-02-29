@@ -1,17 +1,18 @@
-package pl.pawelszopinski.service;
+package pl.pawelszopinski.handler;
 
 import org.apache.commons.lang3.StringUtils;
 import pl.pawelszopinski.config.Configuration;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.InvalidParameterException;
+import java.net.http.HttpTimeoutException;
 import java.util.Base64;
 
-public class HttpRequestService {
+public class HttpRequestHandler {
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
@@ -20,7 +21,7 @@ public class HttpRequestService {
     private final String userName;
     private final String token;
 
-    public HttpRequestService(String userName, String token) {
+    public HttpRequestHandler(String userName, String token) {
         this.userName = userName;
         this.token = token;
     }
@@ -36,14 +37,20 @@ public class HttpRequestService {
 
         HttpRequest request = httpBuilder.build();
 
-        return HTTP_CLIENT.send(request, bodyType);
+        try {
+            return HTTP_CLIENT.send(request, bodyType);
+        } catch (ConnectException e) {
+            throw new ConnectException("There seems to be no connection to the internet.");
+        } catch (HttpTimeoutException e) {
+            throw new HttpTimeoutException("Your request timed out. Please try again.");
+        }
     }
 
     private void addAuthHeaderIfAuthFlagTrue(HttpRequest.Builder httpBuilder, boolean authenticate) {
         if (authenticate && StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(token)) {
             httpBuilder.header("Authorization", basicAuth());
         } else if (authenticate && (StringUtils.isBlank(userName) || StringUtils.isBlank(token))) {
-            throw new InvalidParameterException("Authentication flag was present, " +
+            throw new IllegalArgumentException("Authentication flag was present, " +
                     "but login details are missing/incomplete.");
         }
     }

@@ -37,4 +37,4 @@ questions:
 1. static configuration class?
 2. display method ok?
 3. system.exit ok in main class (error handling)?
-4. result as superclass or just use List<Object>?
+4. result compiler, httpRequest static or not or does not make difference?

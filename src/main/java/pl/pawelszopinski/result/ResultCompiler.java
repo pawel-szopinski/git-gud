@@ -8,7 +8,6 @@ abstract class ResultCompiler {
     private final HttpRequestHandler httpRequest =
             new HttpRequestHandler(Configuration.getUserName(), Configuration.getUserToken());
     private final String uri;
-
     private final boolean authenticate;
 
     ResultCompiler(String uri, boolean authenticate) {

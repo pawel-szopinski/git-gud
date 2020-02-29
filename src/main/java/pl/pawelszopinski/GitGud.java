@@ -39,7 +39,7 @@ public class GitGud implements Callable<Integer> {
                 .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
                 .execute("commit-info", "-o", "pawel-szopinski", "-r", "implementers-toolbox",
                         "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
-                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x");
+                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x", "-v");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "commit-info", "-o", "pawel-szopinski", "-r", "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92",

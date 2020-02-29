@@ -3,6 +3,7 @@ package pl.pawelszopinski.subcommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
+import pl.pawelszopinski.entity.Commit;
 import pl.pawelszopinski.entity.ParsedResult;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
@@ -66,6 +67,6 @@ public class GetCommitInfo implements Callable<Integer> {
         ParsedArrayResultCompiler resultCompiler = new ParsedArrayResultCompiler(
                 uri, URI_ITEM_REPLACEMENT, shaArray, auth.isAuth());
 
-        return resultCompiler.compileParsedResult();
+        return resultCompiler.compileParsedResult(Commit.class);
     }
 }

@@ -16,10 +16,10 @@ public class VerboseArrayResultCompiler extends ArrayResultCompiler {
         StringBuilder result = new StringBuilder();
 
         for (String item : getItems()) {
-            result.append(getSingleItemResult(item));
+            result.append("\n").append(getSingleItemResult(item));
         }
 
-        return result.toString();
+        return result.toString().substring(1);
     }
 
     private String getSingleItemResult(String item) throws Exception {

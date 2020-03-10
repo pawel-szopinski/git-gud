@@ -10,10 +10,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.exception.ReadPropertiesException;
+import pl.pawelszopinski.handler.CmdLineExceptionMsgHandler;
 import pl.pawelszopinski.handler.PrintHandler;
 
 import java.io.IOException;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 @Command(version = "Version: 1.0",
@@ -26,9 +27,9 @@ public class GitGud implements Callable<Integer> {
 
         loadProperties();
 
-//        int exitCode = new CommandLine(new GitGud()).execute(args);
-
         int exitCode = createCommandLine().execute(args);
+
+//        int exitCode = createCommandLine().execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-a");
 
 //        int exitCode = new CommandLine(new GitGud())
 //                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
@@ -58,7 +59,7 @@ public class GitGud implements Callable<Integer> {
     @Override
     public Integer call() {
         showAppLogo();
-        CommandLine.usage(this, System.out);
+        CommandLine.usage(createCommandLine(), System.out);
 
         return 0;
     }
@@ -73,18 +74,24 @@ public class GitGud implements Callable<Integer> {
     }
 
     private static CommandLine createCommandLine() {
-        CommandLine cl = new CommandLine(new GitGud());
+        CommandLine cl = new CommandLine(new GitGud())
+                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler());
 
-        Set classes = null;
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
         try {
-            classes = ClassPath.from(GitGud.class.getClassLoader()).getTopLevelClasses(
-                    "pl.pawelszopinski.subcommand");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            ClassPath classpath = ClassPath.from(loader);
 
-        for (Object aClass : classes) {
-            cl.addSubcommand(aClass.getClass());
+            for (ClassPath.ClassInfo classInfo : classpath.getTopLevelClasses(
+                    "pl.pawelszopinski.subcommand")) {
+                Class<?> clazz = Class.forName(classInfo.getName());
+
+                cl.addSubcommand(clazz.getDeclaredConstructor().newInstance());
+            }
+        } catch (IOException | InstantiationException | ClassNotFoundException |
+                IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            PrintHandler.printException("Could not load commands.");
+            System.exit(1);
         }
 
         return cl;

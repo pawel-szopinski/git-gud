@@ -123,7 +123,7 @@
                         <configuration>
                             <target>
                                 <copy file="src/main/resources/git-gud.properties"
-                                      tofile="${basedir}/target/git-gud.properties" overwrite="true"/>
+                                      tofile="${basedir}/target/git-gud.properties" overwrite="false"/>
                                 <delete file="${basedir}/target/classes/git-gud.properties"/>
                             </target>
                         </configuration>

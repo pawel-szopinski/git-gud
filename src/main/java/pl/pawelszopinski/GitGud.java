@@ -1,22 +1,25 @@
 package pl.pawelszopinski;
 
+import com.google.common.reflect.ClassPath;
+import com.indvd00m.ascii.render.Render;
+import com.indvd00m.ascii.render.api.ICanvas;
+import com.indvd00m.ascii.render.api.IContextBuilder;
+import com.indvd00m.ascii.render.api.IRender;
+import com.indvd00m.ascii.render.elements.PseudoText;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import pl.pawelszopinski.config.Configuration;
-import pl.pawelszopinski.handler.CmdLineExceptionMsgHandler;
+import pl.pawelszopinski.exception.ReadPropertiesException;
 import pl.pawelszopinski.handler.PrintHandler;
-import pl.pawelszopinski.subcommand.GetCommitInfo;
-import pl.pawelszopinski.subcommand.GetStargazers;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.InvalidParameterException;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(version = "Version: 1.0",
+@Command(version = "Version: 1.0",
         description = "Application that allows pulling various information from " +
                 "GitHub REST API in JSON format.",
-        mixinStandardHelpOptions = true,
-        subcommands = {GetCommitInfo.class, GetStargazers.class})
+        mixinStandardHelpOptions = true)
 public class GitGud implements Callable<Integer> {
 
     public static void main(String[] args) {
@@ -24,6 +27,8 @@ public class GitGud implements Callable<Integer> {
         loadProperties();
 
 //        int exitCode = new CommandLine(new GitGud()).execute(args);
+
+        int exitCode = createCommandLine().execute(args);
 
 //        int exitCode = new CommandLine(new GitGud())
 //                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
@@ -35,11 +40,11 @@ public class GitGud implements Callable<Integer> {
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-h");
 
-        int exitCode = new CommandLine(new GitGud())
-                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
-                .execute("commit-info", "-o", "pawel-szopinski", "-r", "implementers-toolbox",
-                        "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
-                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x", "-v");
+//        int exitCode = new CommandLine(new GitGud())
+//                .setExecutionExceptionHandler(new CmdLineExceptionMsgHandler())
+//                .execute("commit-info", "-o", "pawel-szopinski", "-r", "implementers-toolbox",
+//                        "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
+//                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x", "-a" , "-v");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "commit-info", "-o", "pawel-szopinski", "-r", "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92",
@@ -52,6 +57,7 @@ public class GitGud implements Callable<Integer> {
 
     @Override
     public Integer call() {
+        showAppLogo();
         CommandLine.usage(this, System.out);
 
         return 0;
@@ -60,18 +66,37 @@ public class GitGud implements Callable<Integer> {
     private static void loadProperties() {
         try {
             Configuration.readFromFile();
-        } catch (IOException e) {
-            PrintHandler.printException("Could not read application properties file! " +
-                    "Make sure that it exists in the same directory as JAR file.");
-            PrintHandler.printException("Additional info - " + e.getMessage());
-            System.exit(1);
-        } catch (InvalidParameterException e) {
-            PrintHandler.printException("Could not read application property values.");
-            PrintHandler.printException("Additional info - " + e.getMessage());
-            System.exit(1);
-        } catch (URISyntaxException e) {
+        } catch (ReadPropertiesException e) {
             PrintHandler.printException(e.getMessage());
             System.exit(1);
         }
+    }
+
+    private static CommandLine createCommandLine() {
+        CommandLine cl = new CommandLine(new GitGud());
+
+        Set classes = null;
+        try {
+            classes = ClassPath.from(GitGud.class.getClassLoader()).getTopLevelClasses(
+                    "pl.pawelszopinski.subcommand");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (Object aClass : classes) {
+            cl.addSubcommand(aClass.getClass());
+        }
+
+        return cl;
+    }
+
+    private void showAppLogo() {
+        IRender render = new Render();
+        IContextBuilder builder = render.newBuilder();
+        builder.width(90).height(12);
+        builder.element(new PseudoText("Git Gud"));
+        ICanvas canvas = render.render(builder.build());
+        String s = canvas.getText();
+        System.out.println(s);
     }
 }

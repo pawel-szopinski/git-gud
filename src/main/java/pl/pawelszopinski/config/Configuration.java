@@ -1,6 +1,7 @@
 package pl.pawelszopinski.config;
 
 import pl.pawelszopinski.GitGud;
+import pl.pawelszopinski.exception.ReadPropertiesException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,9 +13,9 @@ import java.util.Properties;
 
 public class Configuration {
 
-    private static final String CONFIG_FILE = "/git-gud.properties";
-    private static final String ADDRESS_KEY = "api.address";
-    private static final String ACCEPT_HDR_KEY = "api.accept-header";
+    private static final String CONFIG_FILE = "git-gud.properties";
+    private static final String ADDRESS_KEY = "required.api.address";
+    private static final String ACCEPT_HDR_KEY = "required.api.accept-header";
     private static final String USER_KEY = "user.name";
     private static final String TOKEN_KEY = "user.token";
 
@@ -58,17 +59,33 @@ public class Configuration {
         Configuration.userToken = userToken;
     }
 
-    public static void readFromFile() throws IOException, InvalidParameterException, URISyntaxException {
-        File jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        String propertiesPath = jarPath.getParent();
+    public static void readFromFile() {
+        File jarPath;
+        try {
+            jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            throw new ReadPropertiesException(e.getMessage());
+        }
 
-        InputStream input = new FileInputStream(propertiesPath + CONFIG_FILE);
+        String propertiesPath = jarPath.getParent() + "/";
 
-        Properties props = new PropertiesExtended();
+        Properties props;
+        try {
+            InputStream input = new FileInputStream(propertiesPath + CONFIG_FILE);
 
-        props.load(input);
+            props = new PropertiesExtended();
+            props.load(input);
+        } catch (IOException e) {
+            throw new ReadPropertiesException("Could not read application properties file!\n" +
+                    "Additional info - " + e.getMessage());
+        }
 
-        assignValues(props);
+        try {
+            assignValues(props);
+        } catch (InvalidParameterException e) {
+            throw new ReadPropertiesException("Could not read application property values.\n" +
+                    "Additional info - " + e.getMessage());
+        }
     }
 
     private static void assignValues(Properties props) {

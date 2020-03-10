@@ -21,6 +21,10 @@ public class HttpRequestHandler {
     private final String userName;
     private final String token;
 
+//    public static HttpRequestHandler create() {
+//        return new HttpRequestHandler(Co);
+//    }
+
     public HttpRequestHandler(String userName, String token) {
         this.userName = userName;
         this.token = token;

@@ -1,6 +1,6 @@
 package pl.pawelszopinski.entity;
 
-public class Error extends ParsedResult {
+public class ErrorResult extends ParsedResult {
 
     private String itemId;
     private int number;

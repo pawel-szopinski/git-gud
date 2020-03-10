@@ -24,9 +24,9 @@ Wyszukiwanie lotów, info o zwierzętach i moje ulubione - meme generator (np. h
 
 autocomplete
 subcommands - auto added from package?
-ascii logo and help when no params
 async httprequest
 version (main class) from Maven?
+walidacja propertiesow
 
 typy zwracanych danych:
 1. pojedynczy rekord/json
@@ -34,7 +34,10 @@ typy zwracanych danych:
 3. wiele tablic rekordow/jsonow
 
 questions:
-1. static configuration class?
-2. display method ok?
-3. system.exit ok in main class (error handling)?
-4. result compiler, httpRequest static or not or does not make difference?
+4. result compiler, httpRequest static or not or does not make difference? - hide constructor, getInstance
+5. regex pattern - static final on class level
+
+Result result = new HttpRequestHandler(user, token)
+    .setUri(uri)
+    .setErrorHandler(new ErrorParser())
+	.get(Commit.class)

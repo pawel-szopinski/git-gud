@@ -2,7 +2,7 @@ package pl.pawelszopinski.result;
 
 import com.google.gson.Gson;
 import org.apache.http.HttpStatus;
-import pl.pawelszopinski.entity.Error;
+import pl.pawelszopinski.entity.ErrorResult;
 import pl.pawelszopinski.entity.ParsedResult;
 
 import java.net.http.HttpResponse;
@@ -42,11 +42,11 @@ public class ParsedArrayResultCompiler extends ArrayResultCompiler {
         if (statusCode == HttpStatus.SC_OK) {
             return gson.fromJson(body, type);
         } else {
-            Error error = gson.fromJson(body, Error.class);
-            error.setItemId(item);
-            error.setNumber(statusCode);
+            ErrorResult errorResult = gson.fromJson(body, ErrorResult.class);
+            errorResult.setItemId(item);
+            errorResult.setNumber(statusCode);
 
-            return error;
+            return errorResult;
         }
     }
 }

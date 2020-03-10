@@ -43,6 +43,14 @@ public class GetCommitInfo implements Callable<Integer> {
         uri = uri.replace("{owner}", owner.getOwner())
                 .replace("{repo}", repository.getRepository());
 
+        // container<Result>
+        // loop
+        //     uri
+        //     http
+        //     Result = get(Commit.class)
+        //     container.add
+
+
         if (verbose.isVerbose()) {
             String result = getVerboseResult();
 

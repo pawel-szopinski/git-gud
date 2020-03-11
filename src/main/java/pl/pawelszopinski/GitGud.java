@@ -9,6 +9,7 @@ import com.indvd00m.ascii.render.elements.PseudoText;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import pl.pawelszopinski.config.Configuration;
+import pl.pawelszopinski.config.PomVersionProvider;
 import pl.pawelszopinski.exception.ReadPropertiesException;
 import pl.pawelszopinski.handler.CmdLineExceptionMsgHandler;
 import pl.pawelszopinski.handler.PrintHandler;
@@ -17,10 +18,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
-@Command(version = "Version: 1.0",
+@Command(name = "java -jar /path/to/app.jar",
         description = "Application that allows pulling various information from " +
                 "GitHub REST API in JSON format.",
-        mixinStandardHelpOptions = true)
+        mixinStandardHelpOptions = true,
+        versionProvider = PomVersionProvider.class)
 public class GitGud implements Callable<Integer> {
 
     public static void main(String[] args) {
@@ -90,7 +92,7 @@ public class GitGud implements Callable<Integer> {
             }
         } catch (IOException | InstantiationException | ClassNotFoundException |
                 IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            PrintHandler.printException("Could not load commands.");
+            PrintHandler.printException("Could not load available commands.");
             System.exit(1);
         }
 

@@ -23,7 +23,6 @@ Wyszukiwanie lotów, info o zwierzętach i moje ulubione - meme generator (np. h
 
 
 async httprequest
-walidacja propertiesow
 
 typy zwracanych danych:
 1. pojedynczy rekord/json

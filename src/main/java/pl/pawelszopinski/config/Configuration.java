@@ -7,15 +7,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 public class Configuration {
 
     private static final String CONFIG_FILE = "git-gud.properties";
-    private static final String ADDRESS_KEY = "required.api.address";
-    private static final String ACCEPT_HDR_KEY = "required.api.accept-header";
+    private static final String ADDRESS_KEY = "api.address";
+    private static final String ACCEPT_HDR_KEY = "api.accept-header";
+    private static final String ACCEPT_HDR_START_VAL = "application/vnd.github.";
     private static final String USER_KEY = "user.name";
     private static final String TOKEN_KEY = "user.token";
 
@@ -32,6 +36,15 @@ public class Configuration {
     }
 
     private static void setApiAddress(String apiAddress) {
+        validatePropertyMissing(apiAddress, ADDRESS_KEY);
+
+        try {
+            new URL(apiAddress);
+        } catch (MalformedURLException e) {
+            throw new InvalidParameterException(
+                    MessageFormat.format("Malformed URL in key {0}!", ADDRESS_KEY));
+        }
+
         Configuration.apiAddress = apiAddress;
     }
 
@@ -40,6 +53,14 @@ public class Configuration {
     }
 
     private static void setAcceptHeader(String acceptHeader) {
+        validatePropertyMissing(acceptHeader, ACCEPT_HDR_KEY);
+
+        if (!acceptHeader.startsWith(ACCEPT_HDR_START_VAL)) {
+            throw new InvalidParameterException(
+                    MessageFormat.format("Key {0} should start with ''{1}''!",
+                            ACCEPT_HDR_KEY, ACCEPT_HDR_START_VAL));
+        }
+
         Configuration.acceptHeader = acceptHeader;
     }
 
@@ -48,6 +69,9 @@ public class Configuration {
     }
 
     private static void setUserName(String userName) {
+        validatePropertyValueWithRegex(userName, USER_KEY,
+                "^(?!-)(?!.*-$)(?!.*?--)[a-z0-9-]{1,39}$");
+
         Configuration.userName = userName;
     }
 
@@ -56,6 +80,9 @@ public class Configuration {
     }
 
     private static void setUserToken(String userToken) {
+        validatePropertyValueWithRegex(userToken, TOKEN_KEY,
+                "[0-9a-z]{40}");
+
         Configuration.userToken = userToken;
     }
 
@@ -83,7 +110,7 @@ public class Configuration {
         try {
             assignValues(props);
         } catch (InvalidParameterException e) {
-            throw new ReadPropertiesException("Could not read application property values.\n" +
+            throw new ReadPropertiesException("Error while reading application property values.\n" +
                     "Additional info - " + e.getMessage());
         }
     }
@@ -93,5 +120,21 @@ public class Configuration {
         setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY));
         setUserName(props.getProperty(USER_KEY));
         setUserToken(props.getProperty(TOKEN_KEY));
+    }
+
+    private static void validatePropertyMissing(String value, String key) {
+        if (value == null) {
+            throw new InvalidParameterException(
+                    MessageFormat.format("Missing key {0}!", key));
+        }
+    }
+
+    private static void validatePropertyValueWithRegex(String value, String key, String pattern) {
+        if (value == null) return;
+
+        if (!value.matches(pattern)) {
+            throw new InvalidParameterException(
+                    MessageFormat.format("Value did not pass validation successfully in key {0}!", key));
+        }
     }
 }

@@ -3,13 +3,13 @@ package pl.pawelszopinski.config;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import picocli.CommandLine;
+import picocli.CommandLine.IVersionProvider;
 import pl.pawelszopinski.exception.ReadPomFileException;
 
 import java.io.FileReader;
 import java.io.IOException;
 
-public class PomVersionProvider implements CommandLine.IVersionProvider {
+public class PomVersionProvider implements IVersionProvider {
 
     @Override
     public String[] getVersion() {

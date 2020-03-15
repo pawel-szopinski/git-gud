@@ -69,8 +69,12 @@ public class Configuration {
     }
 
     private static void setUserName(String userName) {
-        validatePropertyValueWithRegex(userName, USER_KEY,
-                "^(?!-)(?!.*-$)(?!.*?--)[a-z0-9-]{1,39}$");
+        if (userName != null && !userName.matches("^(?!-)(?!.*-$)(?!.*?--)[a-z0-9-]{1,39}$")) {
+            throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
+                    "- consist only of alphanumeric characters or ''-'' " +
+                    "(cannot be first, last or two/more consecutive)\n" +
+                    "- be between 1 and 39 characters", USER_KEY));
+        }
 
         Configuration.userName = userName;
     }
@@ -80,8 +84,11 @@ public class Configuration {
     }
 
     private static void setUserToken(String userToken) {
-        validatePropertyValueWithRegex(userToken, TOKEN_KEY,
-                "[0-9a-z]{40}");
+        if (userToken != null && !userToken.matches("[0-9a-z]{40}")) {
+            throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
+                    "- consist only of lowercase alphanumeric characters\n" +
+                    "- have length of exactly 40 characters", TOKEN_KEY));
+        }
 
         Configuration.userToken = userToken;
     }
@@ -126,15 +133,6 @@ public class Configuration {
         if (value == null) {
             throw new InvalidParameterException(
                     MessageFormat.format("Missing key {0}!", key));
-        }
-    }
-
-    private static void validatePropertyValueWithRegex(String value, String key, String pattern) {
-        if (value == null) return;
-
-        if (!value.matches(pattern)) {
-            throw new InvalidParameterException(
-                    MessageFormat.format("Value did not pass validation successfully in key {0}!", key));
         }
     }
 }

@@ -17,20 +17,10 @@ public class HttpRequestHandler {
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .build();
+    private static final String USER_NAME = Configuration.getUserName();
+    private static final String USER_TOKEN = Configuration.getUserToken();
 
-    private final String userName;
-    private final String token;
-
-//    public static HttpRequestHandler create() {
-//        return new HttpRequestHandler(Co);
-//    }
-
-    public HttpRequestHandler(String userName, String token) {
-        this.userName = userName;
-        this.token = token;
-    }
-
-    public <T> HttpResponse<T> sendGet(String uri, HttpResponse.BodyHandler<T> bodyType, boolean authenticate)
+    public HttpResponse<String> sendGet(String uri, boolean authenticate)
             throws IOException, InterruptedException {
         HttpRequest.Builder httpBuilder = HttpRequest.newBuilder()
                 .GET()
@@ -42,7 +32,7 @@ public class HttpRequestHandler {
         HttpRequest request = httpBuilder.build();
 
         try {
-            return HTTP_CLIENT.send(request, bodyType);
+            return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (ConnectException e) {
             throw new ConnectException("There seems to be no connection to the internet.");
         } catch (HttpTimeoutException e) {
@@ -51,15 +41,15 @@ public class HttpRequestHandler {
     }
 
     private void addAuthHeaderIfAuthFlagTrue(HttpRequest.Builder httpBuilder, boolean authenticate) {
-        if (authenticate && StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(token)) {
+        if (authenticate && StringUtils.isNotBlank(USER_NAME) && StringUtils.isNotBlank(USER_TOKEN)) {
             httpBuilder.header("Authorization", basicAuth());
-        } else if (authenticate && (StringUtils.isBlank(userName) || StringUtils.isBlank(token))) {
+        } else if (authenticate && (StringUtils.isBlank(USER_NAME) || StringUtils.isBlank(USER_TOKEN))) {
             throw new IllegalArgumentException("Authentication flag was present, " +
                     "but login details are missing/incomplete.");
         }
     }
 
     private String basicAuth() {
-        return "Basic " + Base64.getEncoder().encodeToString((userName + ":" + token).getBytes());
+        return "Basic " + Base64.getEncoder().encodeToString((USER_NAME + ":" + USER_TOKEN).getBytes());
     }
 }

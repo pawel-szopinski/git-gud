@@ -9,20 +9,25 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParsedArrayResultCompiler extends ArrayResultCompiler {
+public class ArrayParsedResultCompiler {
 
     private final Gson gson = new Gson();
+    private final ResultCompilerBasicInfo basicInfo;
+    private final String[] items;
+    private final String uriItemReplacement;
 
-    public ParsedArrayResultCompiler(String uri, String uriItemReplacement,
-                                     String[] items, boolean authenticate) {
-        super(uri, uriItemReplacement, items, authenticate);
+    public ArrayParsedResultCompiler(ResultCompilerBasicInfo resultCompilerBasicInfo, String[] items,
+                                     String uriItemReplacement) {
+        this.basicInfo = resultCompilerBasicInfo;
+        this.items = items;
+        this.uriItemReplacement = uriItemReplacement;
     }
 
     public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type)
             throws Exception {
         List<ParsedResult> resultList = new ArrayList<>();
 
-        for (String item : getItems()) {
+        for (String item : items) {
             resultList.add(getSingleItemResult(item, type));
         }
 
@@ -31,10 +36,10 @@ public class ParsedArrayResultCompiler extends ArrayResultCompiler {
 
     private <T extends ParsedResult> ParsedResult getSingleItemResult(String item, Class<T> type)
             throws Exception {
-        String finalUri = getUri().replace(getUriItemReplacement(), item);
+        String finalUri = basicInfo.getUri().replace(uriItemReplacement, item);
 
-        HttpResponse<String> response =
-                getHttpRequest().sendGet(finalUri, HttpResponse.BodyHandlers.ofString(), authenticate());
+        HttpResponse<String> response = basicInfo.getHttpRequest().sendGet(
+                finalUri, basicInfo.isAuthenticate());
 
         String body = response.body();
         int statusCode = response.statusCode();

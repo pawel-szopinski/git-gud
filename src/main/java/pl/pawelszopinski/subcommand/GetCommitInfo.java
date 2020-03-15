@@ -7,8 +7,9 @@ import pl.pawelszopinski.entity.Commit;
 import pl.pawelszopinski.entity.ParsedResult;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
-import pl.pawelszopinski.result.ParsedArrayResultCompiler;
-import pl.pawelszopinski.result.VerboseArrayResultCompiler;
+import pl.pawelszopinski.result.ArrayParsedResultCompiler;
+import pl.pawelszopinski.result.ArrayVerboseResultCompiler;
+import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -43,20 +44,14 @@ public class GetCommitInfo implements Callable<Integer> {
         uri = uri.replace("{owner}", owner.getOwner())
                 .replace("{repo}", repository.getRepository());
 
-        // container<Result>
-        // loop
-        //     uri
-        //     http
-        //     Result = get(Commit.class)
-        //     container.add
-
+        ResultCompilerBasicInfo basicInfo = new ResultCompilerBasicInfo(uri, auth.isAuth());
 
         if (verbose.isVerbose()) {
-            String result = getVerboseResult();
+            String result = getVerboseResult(basicInfo);
 
             PrintHandler.printJson(result);
         } else {
-            List<ParsedResult> result = getParsedResult();
+            List<ParsedResult> result = getParsedResult(basicInfo);
 
             PrintHandler.printParsedResult(result);
         }
@@ -64,16 +59,16 @@ public class GetCommitInfo implements Callable<Integer> {
         return 0;
     }
 
-    private String getVerboseResult() throws Exception {
-        VerboseArrayResultCompiler resultCompiler = new VerboseArrayResultCompiler(
-                uri, URI_ITEM_REPLACEMENT, shaArray, auth.isAuth());
+    private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
+        ArrayVerboseResultCompiler resultCompiler = new ArrayVerboseResultCompiler(
+                basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
         return resultCompiler.compileJsonResult();
     }
 
-    private List<ParsedResult> getParsedResult() throws Exception {
-        ParsedArrayResultCompiler resultCompiler = new ParsedArrayResultCompiler(
-                uri, URI_ITEM_REPLACEMENT, shaArray, auth.isAuth());
+    private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
+        ArrayParsedResultCompiler resultCompiler = new ArrayParsedResultCompiler(
+                basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
         return resultCompiler.compileParsedResult(Commit.class);
     }

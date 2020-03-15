@@ -5,7 +5,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
-import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.entity.User;
 import pl.pawelszopinski.handler.HttpRequestHandler;
 import pl.pawelszopinski.handler.PrintHandler;
@@ -37,8 +36,7 @@ public class GetStargazers implements Callable<Integer> {
     @Mixin
     private Help help;
 
-    private final HttpRequestHandler httpRequest =
-            new HttpRequestHandler(Configuration.getUserName(), Configuration.getUserToken());
+    private final HttpRequestHandler httpRequest = new HttpRequestHandler();
     private static final Gson gson = new Gson();
 
     @Override
@@ -54,7 +52,7 @@ public class GetStargazers implements Callable<Integer> {
             String uri = "repos/" + owner.getOwner() + "/" +
                     repository.getRepository() + "/stargazers?per_page=100&page=" + pageNo;
 
-            response = httpRequest.sendGet(uri, HttpResponse.BodyHandlers.ofString(), auth.isAuth());
+            response = httpRequest.sendGet(uri, auth.isAuth());
 
             if (response.statusCode() != HttpStatus.SC_OK) {
                 PrintHandler.printException("HTTP error: " + response.statusCode() + ", " +

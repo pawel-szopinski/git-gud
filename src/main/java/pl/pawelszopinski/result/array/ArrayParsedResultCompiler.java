@@ -2,8 +2,8 @@ package pl.pawelszopinski.result.array;
 
 import com.google.gson.Gson;
 import org.apache.http.HttpStatus;
-import pl.pawelszopinski.entity.ErrorResult;
-import pl.pawelszopinski.entity.ParsedResult;
+import pl.pawelszopinski.parsedentity.ErrorResult;
+import pl.pawelszopinski.parsedentity.ParsedResult;
 import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 

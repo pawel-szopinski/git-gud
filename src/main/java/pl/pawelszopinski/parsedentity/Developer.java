@@ -1,4 +1,4 @@
-package pl.pawelszopinski.entity;
+package pl.pawelszopinski.parsedentity;
 
 public class Developer {
 

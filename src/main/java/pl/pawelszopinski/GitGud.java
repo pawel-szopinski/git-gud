@@ -34,7 +34,10 @@ public class GitGud implements Callable<Integer> {
 //        int exitCode = createCommandLine().execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-a");
 
 //        int exitCode = createCommandLine()
-//                .execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "--sort", "-v");
+//                .execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "--sort");
+
+        int exitCode = createCommandLine()
+                .execute("starred-by", "-u", "pawel-szopinski", "-s");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");
@@ -47,8 +50,8 @@ public class GitGud implements Callable<Integer> {
 //                        "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
 //                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x", "-v");
 
-        int exitCode = createCommandLine().execute("commit-info", "-o", "pawel-szopinski", "-r",
-                "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92", "-a");
+//        int exitCode = createCommandLine().execute("commit-info", "-o", "pawel-szopinski", "-r",
+//                "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92", "-a");
 
 //        int exitCode = new CommandLine(new GitGud()).execute("commit-info", "-h");
 

@@ -1,5 +1,6 @@
 package pl.pawelszopinski.config;
 
+import org.apache.commons.lang3.StringUtils;
 import pl.pawelszopinski.GitGud;
 import pl.pawelszopinski.exception.ReadPropertiesException;
 
@@ -69,7 +70,8 @@ public class Configuration {
     }
 
     private static void setUserName(String userName) {
-        if (userName != null && !userName.matches("^(?!-)(?!.*-$)(?!.*?--)[a-z0-9-]{1,39}$")) {
+        if (StringUtils.isNotEmpty(userName) &&
+                !userName.matches("^(?!-)(?!.*-$)(?!.*?--)[a-z0-9-]{1,39}$")) {
             throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
                     "- consist only of alphanumeric characters or ''-'' " +
                     "(cannot be first, last or two/more consecutive)\n" +
@@ -84,7 +86,7 @@ public class Configuration {
     }
 
     private static void setUserToken(String userToken) {
-        if (userToken != null && !userToken.matches("[0-9a-z]{40}")) {
+        if (StringUtils.isNotEmpty(userToken) && !userToken.matches("[0-9a-z]{40}")) {
             throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
                     "- consist only of lowercase alphanumeric characters\n" +
                     "- have length of exactly 40 characters", TOKEN_KEY));

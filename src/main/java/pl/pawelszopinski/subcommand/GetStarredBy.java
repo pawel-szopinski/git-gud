@@ -4,9 +4,11 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 import pl.pawelszopinski.handler.PrintHandler;
-import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.option.Authenticate;
+import pl.pawelszopinski.option.Help;
+import pl.pawelszopinski.option.Verbose;
 import pl.pawelszopinski.parsedentity.ParsedResult;
-import pl.pawelszopinski.parsedentity.User;
+import pl.pawelszopinski.parsedentity.Repository;
 import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.result.VerboseResult;
@@ -17,16 +19,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name = "stargazers", description = "Print users starring a given repository.")
-public class GetStargazers implements Callable<Integer> {
+@Command(name = "starred-by", description = "Print repositories starred by a given user.")
+public class GetStarredBy implements Callable<Integer> {
 
-    private String uri = "repos/{owner}/{repo}/stargazers?per_page=100&page=";
+    private String uri = "users/{username}/starred?per_page=100&page=";
 
-    @Mixin
-    private Owner owner;
-
-    @Mixin
-    private Repository repository;
+    @Option(names = {"-u", "--user"}, required = true, paramLabel = "<name>", description = "Users's " +
+            "account name.")
+    private String userName;
 
     @Mixin
     private Authenticate auth;
@@ -38,13 +38,12 @@ public class GetStargazers implements Callable<Integer> {
     private Help help;
 
     @Option(names = {"-s", "--sort"},
-            description = "Sort users by login (works only with non-verbose output).")
+            description = "Sort repositories by name (works only with non-verbose output).")
     private boolean sort;
 
     @Override
     public Integer call() throws Exception {
-        uri = uri.replace("{owner}", owner.getOwner())
-                .replace("{repo}", repository.getRepository());
+        uri = uri.replace("{username}", userName);
 
         ResultCompilerBasicInfo basicInfo = new ResultCompilerBasicInfo(uri, auth.isAuth());
 
@@ -68,7 +67,7 @@ public class GetStargazers implements Callable<Integer> {
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
         ParsableResult resultCompiler = new PagedParsedResultCompiler(basicInfo);
 
-        return resultCompiler.compileParsedResult(User.class);
+        return resultCompiler.compileParsedResult(Repository.class);
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
@@ -77,4 +76,3 @@ public class GetStargazers implements Callable<Integer> {
         return resultCompiler.compileJsonResult();
     }
 }
-

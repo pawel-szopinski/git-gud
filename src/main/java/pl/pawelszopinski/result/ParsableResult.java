@@ -1,6 +1,6 @@
 package pl.pawelszopinski.result;
 
-import pl.pawelszopinski.entity.ParsedResult;
+import pl.pawelszopinski.parsedentity.ParsedResult;
 
 import java.util.List;
 

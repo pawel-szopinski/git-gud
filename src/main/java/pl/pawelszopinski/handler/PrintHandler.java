@@ -4,8 +4,8 @@ import java.util.List;
 
 public class PrintHandler {
 
-    public static void printJson(String body) {
-        System.out.println(body);
+    public static void printString(String text) {
+        System.out.println(text);
     }
 
     public static <T> void printParsedResult(List<T> resultList) {

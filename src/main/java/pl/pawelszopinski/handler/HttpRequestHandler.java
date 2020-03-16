@@ -3,7 +3,6 @@ package pl.pawelszopinski.handler;
 import org.apache.commons.lang3.StringUtils;
 import pl.pawelszopinski.config.Configuration;
 
-import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -18,20 +17,33 @@ public class HttpRequestHandler {
             .version(HttpClient.Version.HTTP_1_1)
             .build();
 
-    private static final String USER_NAME = Configuration.getUserName();
     private static final String USER_TOKEN = Configuration.getUserToken();
     private static final String API_ADDRESS = Configuration.getApiAddress();
-    private static final String ACCEPT_HDR = Configuration.getAcceptHeader();
 
     private HttpRequest.Builder httpBuilder = HttpRequest.newBuilder()
-            .header("Accept", ACCEPT_HDR);
+            .header("Accept", Configuration.getAcceptHeader());
 
-    public HttpResponse<String> sendGet(String uri, boolean authenticate)
-            throws IOException, InterruptedException {
+    public HttpResponse<String> sendGet(String uri, boolean authenticate) throws Exception {
         httpBuilder.GET().uri(URI.create(API_ADDRESS + uri));
 
-        addAuthHeaderIfAuthFlagTrue(httpBuilder, authenticate);
+        return sendRequest(authenticate);
+    }
 
+    public int sendPut(String uri) throws Exception {
+        httpBuilder.PUT(HttpRequest.BodyPublishers.noBody())
+                .uri(URI.create(API_ADDRESS + uri));
+
+        return sendRequest(true).statusCode();
+    }
+
+    public int sendDelete(String uri) throws Exception {
+        httpBuilder.DELETE().uri(URI.create(API_ADDRESS + uri));
+
+        return sendRequest(true).statusCode();
+    }
+
+    private HttpResponse<String> sendRequest(boolean authenticate) throws Exception {
+        addAuthHeaderIfAuthFlagTrue(httpBuilder, authenticate);
         HttpRequest request = httpBuilder.build();
 
         try {
@@ -44,16 +56,13 @@ public class HttpRequestHandler {
     }
 
     private void addAuthHeaderIfAuthFlagTrue(HttpRequest.Builder httpBuilder, boolean authenticate) {
-        if (authenticate && StringUtils.isNotBlank(USER_NAME) && StringUtils.isNotBlank(USER_TOKEN)) {
-            httpBuilder.header("Authorization", basicAuth());
-        } else if (authenticate && (StringUtils.isBlank(USER_NAME) || StringUtils.isBlank(USER_TOKEN))) {
+        if (authenticate && StringUtils.isNotEmpty(USER_TOKEN)) {
+            httpBuilder.header("Authorization",
+                    "Basic " + Base64.getEncoder().encodeToString((USER_TOKEN).getBytes()));
+        } else if (authenticate && StringUtils.isEmpty(USER_TOKEN)) {
             throw new IllegalArgumentException("Authentication required by command or " +
                     "authentication flag explicitly mentioned, " +
-                    "but login details are missing/incomplete.");
+                    "but details are missing/incomplete.");
         }
-    }
-
-    private String basicAuth() {
-        return "Basic " + Base64.getEncoder().encodeToString((USER_NAME + ":" + USER_TOKEN).getBytes());
     }
 }

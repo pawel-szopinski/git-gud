@@ -21,12 +21,10 @@ public class Configuration {
     private static final String ADDRESS_KEY = "api.address";
     private static final String ACCEPT_HDR_KEY = "api.accept-header";
     private static final String ACCEPT_HDR_START_VAL = "application/vnd.github.";
-    private static final String USER_KEY = "user.name";
     private static final String TOKEN_KEY = "user.token";
 
     private static String apiAddress;
     private static String acceptHeader;
-    private static String userName;
     private static String userToken;
 
     private Configuration() {
@@ -63,22 +61,6 @@ public class Configuration {
         }
 
         Configuration.acceptHeader = acceptHeader;
-    }
-
-    public static String getUserName() {
-        return userName;
-    }
-
-    private static void setUserName(String userName) {
-        if (StringUtils.isNotEmpty(userName) &&
-                !userName.matches("^(?!-)(?!.*-$)(?!.*?--)[a-z0-9-]{1,39}$")) {
-            throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
-                    "- consist only of alphanumeric characters or ''-'' " +
-                    "(cannot be first, last or two/more consecutive)\n" +
-                    "- be between 1 and 39 characters", USER_KEY));
-        }
-
-        Configuration.userName = userName;
     }
 
     public static String getUserToken() {
@@ -127,7 +109,6 @@ public class Configuration {
     private static void assignValues(Properties props) {
         setApiAddress(props.getProperty(ADDRESS_KEY));
         setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY));
-        setUserName(props.getProperty(USER_KEY));
         setUserToken(props.getProperty(TOKEN_KEY));
     }
 

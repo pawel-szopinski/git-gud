@@ -22,18 +22,5 @@ Brak tematu dla Ciebie? Nic starconego!!!! xD a tak serio to jeśli powyższe te
 Wyszukiwanie lotów, info o zwierzętach i moje ulubione - meme generator (np. https://api.imgflip.com/) xD Odpadają aplikacje które będą mieć tylko jedna prostą funkcje - np. zwróc losowy żart. No i nie gwarantuje że API które są na tej liście są dobrze udokumentowane i działają :) W przypadku wyboru własnego API - dajcie znać jak najszybciej co wybraliście.
 
 
+
 async httprequest
-
-typy zwracanych danych:
-1. pojedynczy rekord/json
-2. tablica rekordow/jsonow
-3. wiele tablic rekordow/jsonow
-
-questions:
-4. result compiler, httpRequest static or not or does not make difference? - hide constructor, getInstance
-5. regex pattern - static final on class level
-
-Result result = new HttpRequestHandler(user, token)
-    .setUri(uri)
-    .setErrorHandler(new ErrorParser())
-	.get(Commit.class)

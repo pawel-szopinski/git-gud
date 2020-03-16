@@ -51,7 +51,7 @@ public class GetCommitInfo implements Callable<Integer> {
         if (verbose.isVerbose()) {
             String result = getVerboseResult(basicInfo);
 
-            PrintHandler.printJson(result);
+            PrintHandler.printString(result);
         } else {
             List<ParsedResult> result = getParsedResult(basicInfo);
 

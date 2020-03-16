@@ -1,5 +1,7 @@
 package pl.pawelszopinski.entity;
 
+import javax.annotation.Nonnull;
+
 public class ErrorResult extends ParsedResult {
 
     private String itemId;
@@ -33,5 +35,16 @@ public class ErrorResult extends ParsedResult {
     @Override
     public String toString() {
         return "Error [itemId=" + itemId + ", number=" + number + ", message=" + message + "]";
+    }
+
+    @Override
+    public int compareTo(@Nonnull ParsedResult o) {
+        if (this == o) {
+            return 0;
+        }
+
+        ErrorResult e = (ErrorResult) o;
+
+        return this.itemId.compareToIgnoreCase(e.itemId);
     }
 }

@@ -1,6 +1,8 @@
 package pl.pawelszopinski.entity;
 
-public class User extends ParsedResult implements Comparable<User> {
+import javax.annotation.Nonnull;
+
+public class User extends ParsedResult {
 
     private int id;
     private String login;
@@ -36,11 +38,13 @@ public class User extends ParsedResult implements Comparable<User> {
     }
 
     @Override
-    public int compareTo(User o) {
+    public int compareTo(@Nonnull ParsedResult o) {
         if (this == o) {
             return 0;
         }
 
-        return this.login.compareToIgnoreCase(o.login);
+        User u = (User) o;
+
+        return this.login.compareToIgnoreCase(u.login);
     }
 }

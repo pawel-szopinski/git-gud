@@ -1,10 +1,12 @@
-package pl.pawelszopinski.result;
+package pl.pawelszopinski.result.array;
 
 import com.cedarsoftware.util.io.JsonWriter;
+import pl.pawelszopinski.result.ResultCompilerBasicInfo;
+import pl.pawelszopinski.result.VerboseResult;
 
 import java.net.http.HttpResponse;
 
-public class ArrayVerboseResultCompiler {
+public class ArrayVerboseResultCompiler implements VerboseResult {
 
     private final ResultCompilerBasicInfo basicInfo;
     private final String[] items;
@@ -17,6 +19,7 @@ public class ArrayVerboseResultCompiler {
         this.uriItemReplacement = uriItemReplacement;
     }
 
+    @Override
     public String compileJsonResult() throws Exception {
         StringBuilder result = new StringBuilder();
 
@@ -25,7 +28,7 @@ public class ArrayVerboseResultCompiler {
                     .append(getSingleItemResult(item));
         }
 
-        return result.toString().substring(1);
+        return result.toString().substring(2);
     }
 
     private String getSingleItemResult(String item) throws Exception {

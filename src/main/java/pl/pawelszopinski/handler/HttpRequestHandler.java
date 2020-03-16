@@ -17,15 +17,18 @@ public class HttpRequestHandler {
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .build();
+
     private static final String USER_NAME = Configuration.getUserName();
     private static final String USER_TOKEN = Configuration.getUserToken();
+    private static final String API_ADDRESS = Configuration.getApiAddress();
+    private static final String ACCEPT_HDR = Configuration.getAcceptHeader();
+
+    private HttpRequest.Builder httpBuilder = HttpRequest.newBuilder()
+            .header("Accept", ACCEPT_HDR);
 
     public HttpResponse<String> sendGet(String uri, boolean authenticate)
             throws IOException, InterruptedException {
-        HttpRequest.Builder httpBuilder = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(Configuration.getApiAddress() + uri))
-                .header("Accept", Configuration.getAcceptHeader());
+        httpBuilder.GET().uri(URI.create(API_ADDRESS + uri));
 
         addAuthHeaderIfAuthFlagTrue(httpBuilder, authenticate);
 
@@ -44,7 +47,8 @@ public class HttpRequestHandler {
         if (authenticate && StringUtils.isNotBlank(USER_NAME) && StringUtils.isNotBlank(USER_TOKEN)) {
             httpBuilder.header("Authorization", basicAuth());
         } else if (authenticate && (StringUtils.isBlank(USER_NAME) || StringUtils.isBlank(USER_TOKEN))) {
-            throw new IllegalArgumentException("Authentication flag was present, " +
+            throw new IllegalArgumentException("Authentication required by command or " +
+                    "authentication flag explicitly mentioned, " +
                     "but login details are missing/incomplete.");
         }
     }

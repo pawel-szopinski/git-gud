@@ -7,9 +7,11 @@ import pl.pawelszopinski.entity.Commit;
 import pl.pawelszopinski.entity.ParsedResult;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
-import pl.pawelszopinski.result.ArrayParsedResultCompiler;
-import pl.pawelszopinski.result.ArrayVerboseResultCompiler;
+import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
+import pl.pawelszopinski.result.VerboseResult;
+import pl.pawelszopinski.result.array.ArrayParsedResultCompiler;
+import pl.pawelszopinski.result.array.ArrayVerboseResultCompiler;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -60,14 +62,14 @@ public class GetCommitInfo implements Callable<Integer> {
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        ArrayVerboseResultCompiler resultCompiler = new ArrayVerboseResultCompiler(
+        VerboseResult resultCompiler = new ArrayVerboseResultCompiler(
                 basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
         return resultCompiler.compileJsonResult();
     }
 
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        ArrayParsedResultCompiler resultCompiler = new ArrayParsedResultCompiler(
+        ParsableResult resultCompiler = new ArrayParsedResultCompiler(
                 basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
         return resultCompiler.compileParsedResult(Commit.class);

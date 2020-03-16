@@ -1,5 +1,7 @@
 package pl.pawelszopinski.entity;
 
+import javax.annotation.Nonnull;
+
 public class Commit extends ParsedResult {
 
     private String sha;
@@ -46,5 +48,16 @@ public class Commit extends ParsedResult {
                 ", author=" + author +
                 ", committer=" + committer +
                 ", message=" + message + "]";
+    }
+
+    @Override
+    public int compareTo(@Nonnull ParsedResult o) {
+        if (this == o) {
+            return 0;
+        }
+
+        Commit c = (Commit) o;
+
+        return this.sha.compareToIgnoreCase(c.sha);
     }
 }

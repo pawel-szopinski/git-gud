@@ -1,15 +1,17 @@
-package pl.pawelszopinski.result;
+package pl.pawelszopinski.result.array;
 
 import com.google.gson.Gson;
 import org.apache.http.HttpStatus;
 import pl.pawelszopinski.entity.ErrorResult;
 import pl.pawelszopinski.entity.ParsedResult;
+import pl.pawelszopinski.result.ParsableResult;
+import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayParsedResultCompiler {
+public class ArrayParsedResultCompiler implements ParsableResult {
 
     private final Gson gson = new Gson();
     private final ResultCompilerBasicInfo basicInfo;
@@ -23,6 +25,7 @@ public class ArrayParsedResultCompiler {
         this.uriItemReplacement = uriItemReplacement;
     }
 
+    @Override
     public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type)
             throws Exception {
         List<ParsedResult> resultList = new ArrayList<>();

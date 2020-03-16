@@ -1,25 +1,26 @@
 package pl.pawelszopinski.subcommand;
 
-import com.google.gson.Gson;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Option;
+import pl.pawelszopinski.entity.ParsedResult;
 import pl.pawelszopinski.entity.User;
-import pl.pawelszopinski.handler.HttpRequestHandler;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
+import pl.pawelszopinski.result.ParsableResult;
+import pl.pawelszopinski.result.ResultCompilerBasicInfo;
+import pl.pawelszopinski.result.VerboseResult;
+import pl.pawelszopinski.result.paged.PagedParsedResultCompiler;
+import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Command(name = "stargazers", description = "Print users starring a given repository.")
 public class GetStargazers implements Callable<Integer> {
+
+    private String uri = "repos/{owner}/{repo}/stargazers?per_page=100&page=";
 
     @Mixin
     private Owner owner;
@@ -36,64 +37,44 @@ public class GetStargazers implements Callable<Integer> {
     @Mixin
     private Help help;
 
-    private final HttpRequestHandler httpRequest = new HttpRequestHandler();
-    private static final Gson gson = new Gson();
+    @Option(names = {"-s", "--sort"},
+            description = "Sort users by login (works only with non-verbose output).")
+    private boolean sort;
 
     @Override
     public Integer call() throws Exception {
-        HttpResponse<String> response;
-        StringBuilder combinedJsons = new StringBuilder();
-        List<User> userList = new ArrayList<>();
-        String linkHeader;
+        uri = uri.replace("{owner}", owner.getOwner())
+                .replace("{repo}", repository.getRepository());
 
-        int pageNo = 1;
+        ResultCompilerBasicInfo basicInfo = new ResultCompilerBasicInfo(uri, auth.isAuth());
 
-        do {
-            String uri = "repos/" + owner.getOwner() + "/" +
-                    repository.getRepository() + "/stargazers?per_page=100&page=" + pageNo;
+        if (verbose.isVerbose()) {
+            String result = getVerboseResult(basicInfo);
 
-            response = httpRequest.sendGet(uri, auth.isAuth());
+            PrintHandler.printJson(result);
+        } else {
+            List<ParsedResult> result = getParsedResult(basicInfo);
 
-            if (response.statusCode() != HttpStatus.SC_OK) {
-                PrintHandler.printException("HTTP error: " + response.statusCode() + ", " +
-                        EnglishReasonPhraseCatalog.INSTANCE.getReason(response.statusCode(), null));
-                return response.statusCode();
+            if (sort) {
+                Collections.sort(result);
             }
 
-            linkHeader = response.headers().firstValue("link").orElse(null);
-
-            if (verbose.isVerbose()) {
-                compileJsonResult(combinedJsons, response.body());
-            } else {
-                compileParsedResult(userList, response.body());
-            }
-
-            pageNo++;
-        } while (linkHeader != null && getLastPage(linkHeader) >= pageNo);
-
-        PrintHandler.printParsedResult(userList);
-//        displaySvc.showJson(combinedJsons.toString());
+            PrintHandler.printParsedResult(result);
+        }
 
         return 0;
     }
 
-    private void compileJsonResult(StringBuilder combinedJsons, String responseBody) {
-        combinedJsons.append(responseBody);
+    private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
+        ParsableResult resultCompiler = new PagedParsedResultCompiler(basicInfo);
+
+        return resultCompiler.compileParsedResult(User.class);
     }
 
-    private void compileParsedResult(List<User> userList, String body) {
-        userList.addAll(Arrays.asList(gson.fromJson(body, User[].class)));
-    }
+    private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
+        VerboseResult resultCompiler = new PagedVerboseResultCompiler(basicInfo);
 
-    private int getLastPage(String linkHeader) {
-        Pattern p = Pattern.compile("page=\\d+>; rel=\"last\"");
-        Matcher m = p.matcher(linkHeader);
-
-        if (!m.find()) {
-            return 0;
-        }
-
-        return Integer.parseInt(m.group().replaceAll("[^\\d]", ""));
+        return resultCompiler.compileJsonResult();
     }
 }
 

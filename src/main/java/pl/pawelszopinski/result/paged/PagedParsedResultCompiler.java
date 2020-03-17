@@ -41,10 +41,10 @@ public class PagedParsedResultCompiler implements ParsableResult {
 
             if (statusCode != HttpStatus.SC_OK) {
                 ErrorResult errorResult = gson.fromJson(body, ErrorResult.class);
-                errorResult.setItemId("Result page " + pageNo);
+                errorResult.setItem("Result page " + pageNo);
                 errorResult.setNumber(statusCode);
 
-                throw new HttpException("Error while fetching data from GitHub.\n" +
+                throw new HttpException("Error while fetching data from GitHub. " +
                         "Details: " + errorResult.toString());
             }
 

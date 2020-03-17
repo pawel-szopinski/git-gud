@@ -4,16 +4,16 @@ import javax.annotation.Nonnull;
 
 public class ErrorResult extends ParsedResult {
 
-    private String itemId;
+    private String item;
     private int number;
     private String message;
 
-    public String getItemId() {
-        return itemId;
+    public String getItem() {
+        return item;
     }
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
+    public void setItem(String item) {
+        this.item = item;
     }
 
     public int getNumber() {
@@ -34,7 +34,7 @@ public class ErrorResult extends ParsedResult {
 
     @Override
     public String toString() {
-        return "Error [itemId=" + itemId + ", number=" + number + ", message=" + message + "]";
+        return "Error [item=" + item + ", number=" + number + ", message=" + message + "]";
     }
 
     @Override
@@ -45,6 +45,6 @@ public class ErrorResult extends ParsedResult {
 
         ErrorResult e = (ErrorResult) o;
 
-        return this.itemId.compareToIgnoreCase(e.itemId);
+        return this.item.compareToIgnoreCase(e.item);
     }
 }

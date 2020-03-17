@@ -33,8 +33,8 @@ public class PagedVerboseResultCompiler implements VerboseResult {
             int statusCode = response.statusCode();
 
             if (statusCode != HttpStatus.SC_OK) {
-                throw new HttpException("Error while fetching data from GitHub.\n" +
-                        "Page " + pageNo + " has thrown an error:\n" + body);
+                throw new HttpException("Error while fetching data from GitHub. " +
+                        "Page " + pageNo + " has thrown an error: " + body);
             }
 
             linkHeader = response.headers().firstValue("link").orElse(null);

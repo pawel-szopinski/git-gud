@@ -51,7 +51,7 @@ public class ArrayParsedResultCompiler implements ParsableResult {
             return gson.fromJson(body, type);
         } else {
             ErrorResult errorResult = gson.fromJson(body, ErrorResult.class);
-            errorResult.setItemId(item);
+            errorResult.setItem(item);
             errorResult.setNumber(statusCode);
 
             return errorResult;

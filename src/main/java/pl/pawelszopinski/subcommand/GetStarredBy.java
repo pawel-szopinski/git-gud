@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name = "starred-by", description = "Print repositories starred by a given user.")
+@Command(name = "starred-by", description = "Get repositories starred by a given user.")
 public class GetStarredBy implements Callable<Integer> {
 
     private String uri = "users/{username}/starred?per_page=100&page=";

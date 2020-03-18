@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name = "branches", description = "Print branches available in a given repository.")
+@Command(name = "branches", description = "Get branches available in a given repository.")
 public class GetBranches implements Callable<Integer> {
 
     private String uri = "repos/{owner}/{repo}/branches?per_page=100&page=";

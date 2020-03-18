@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name = "stargazers", description = "Print users starring a given repository.")
+@Command(name = "stargazers", description = "Get users starring a given repository.")
 public class GetStargazers implements Callable<Integer> {
 
     private String uri = "repos/{owner}/{repo}/stargazers?per_page=100&page=";

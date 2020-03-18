@@ -19,8 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 @Command(name = "java -jar /path/to/app.jar",
-        description = "Application that allows pulling various information from " +
-                "GitHub REST API in JSON format.",
+        description = "An application that allows pulling various information from " +
+                "GitHub REST API.",
         mixinStandardHelpOptions = true,
         versionProvider = PomVersionProvider.class)
 public class GitGud implements Callable<Integer> {
@@ -43,7 +43,7 @@ public class GitGud implements Callable<Integer> {
 //                .execute("star-repo", "-r", "budgie-extras", "-o", "UbuntuBudgie");
 
         int exitCode = createCommandLine()
-                .execute("branches", "-r", "budgie-extras", "-o", "UbuntuBudgie", "-s");
+                .execute("search-users", "-u", "m", "-l", "java", "-L", "germany", "-r", ">10", "-v", "-a");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");
@@ -57,7 +57,8 @@ public class GitGud implements Callable<Integer> {
 //                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x", "-v");
 
 //        int exitCode = createCommandLine().execute("commit-info", "-o", "pawel-szopinski", "-r",
-//                "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92", "-a");
+//                "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92",
+//                "d5a33fc7e4ef29618438ae9321c55530a8014f22", "-a");
 
 //        int exitCode = new CommandLine(new GitGud()).execute("commit-info", "-h");
 

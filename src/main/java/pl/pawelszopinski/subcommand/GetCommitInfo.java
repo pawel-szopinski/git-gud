@@ -16,7 +16,7 @@ import pl.pawelszopinski.result.array.ArrayVerboseResultCompiler;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name = "commit-info", description = "Print info about one or more commits.")
+@Command(name = "commit-info", description = "Get info about one or more commits.")
 public class GetCommitInfo implements Callable<Integer> {
 
     private final static String URI_ITEM_REPLACEMENT = "{commit_sha}";

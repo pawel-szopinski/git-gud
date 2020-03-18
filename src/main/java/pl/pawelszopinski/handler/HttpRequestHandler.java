@@ -1,5 +1,6 @@
 package pl.pawelszopinski.handler;
 
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang3.StringUtils;
 import pl.pawelszopinski.config.Configuration;
 
@@ -9,7 +10,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
-import java.util.Base64;
 
 public class HttpRequestHandler {
 
@@ -24,20 +24,20 @@ public class HttpRequestHandler {
             .header("Accept", Configuration.getAcceptHeader());
 
     public HttpResponse<String> sendGet(String uri, boolean authenticate) throws Exception {
-        httpBuilder.GET().uri(URI.create(API_ADDRESS + uri));
+        httpBuilder.GET().uri(URI.create(URIUtil.encodeQuery(API_ADDRESS + uri)));
 
         return sendRequest(authenticate);
     }
 
     public int sendPut(String uri) throws Exception {
         httpBuilder.PUT(HttpRequest.BodyPublishers.noBody())
-                .uri(URI.create(API_ADDRESS + uri));
+                .uri(URI.create(URIUtil.encodeQuery(API_ADDRESS + uri)));
 
         return sendRequest(true).statusCode();
     }
 
     public int sendDelete(String uri) throws Exception {
-        httpBuilder.DELETE().uri(URI.create(API_ADDRESS + uri));
+        httpBuilder.DELETE().uri(URI.create(URIUtil.encodeQuery(API_ADDRESS + uri)));
 
         return sendRequest(true).statusCode();
     }
@@ -57,8 +57,7 @@ public class HttpRequestHandler {
 
     private void addAuthHeaderIfAuthFlagTrue(HttpRequest.Builder httpBuilder, boolean authenticate) {
         if (authenticate && StringUtils.isNotEmpty(USER_TOKEN)) {
-            httpBuilder.header("Authorization",
-                    "Basic " + Base64.getEncoder().encodeToString((USER_TOKEN).getBytes()));
+            httpBuilder.setHeader("Authorization", "token " + USER_TOKEN);
         } else if (authenticate && StringUtils.isEmpty(USER_TOKEN)) {
             throw new IllegalArgumentException("Authentication required by command or " +
                     "authentication flag explicitly mentioned, " +

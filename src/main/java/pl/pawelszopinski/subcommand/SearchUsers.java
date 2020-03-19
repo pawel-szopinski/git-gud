@@ -73,7 +73,6 @@ public class SearchUsers implements Callable<Integer> {
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
         ParsableResult resultCompiler = new PagedParsedResultCompiler(basicInfo);
 
-        //TODO
         return resultCompiler.compileParsedResult(User.class);
     }
 

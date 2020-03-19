@@ -50,11 +50,23 @@ public class PagedParsedResultCompiler implements ParsableResult {
 
             linkHeader = response.headers().firstValue("link").orElse(null);
 
+            body = trimJsonStringIfActualObjectsNested(response.body());
+
             resultList.addAll(gson.fromJson(body, TypeToken.getParameterized(List.class, type).getType()));
 
             pageNo++;
         } while (linkHeader != null && LastPageExtractor.getLastPage(linkHeader) >= pageNo);
 
         return resultList;
+    }
+
+    private String trimJsonStringIfActualObjectsNested(String body) {
+        if (body.startsWith("[")) {
+            return body;
+        }
+
+        body = body.substring(body.indexOf("["));
+
+        return body.substring(0, body.lastIndexOf("]") + 1);
     }
 }

@@ -9,9 +9,7 @@ import pl.pawelszopinski.option.Help;
 import pl.pawelszopinski.option.Verbose;
 import pl.pawelszopinski.parsedentity.ParsedResult;
 import pl.pawelszopinski.parsedentity.Repository;
-import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
-import pl.pawelszopinski.result.VerboseResult;
 import pl.pawelszopinski.result.paged.PagedParsedResultCompiler;
 import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
@@ -65,13 +63,13 @@ public class GetStarredBy implements Callable<Integer> {
     }
 
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        ParsableResult resultCompiler = new PagedParsedResultCompiler(basicInfo);
+        PagedParsedResultCompiler resultCompiler = new PagedParsedResultCompiler(basicInfo);
 
-        return resultCompiler.compileParsedResult(Repository.class);
+        return resultCompiler.compileParsedResult(Repository.class, false);
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        VerboseResult resultCompiler = new PagedVerboseResultCompiler(basicInfo);
+        PagedVerboseResultCompiler resultCompiler = new PagedVerboseResultCompiler(basicInfo);
 
         return resultCompiler.compileJsonResult();
     }

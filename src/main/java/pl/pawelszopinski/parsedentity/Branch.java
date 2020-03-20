@@ -15,16 +15,8 @@ public class Branch extends ParsedResult {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public boolean isProtect() {
         return protect;
-    }
-
-    public void setProtect(boolean protect) {
-        this.protect = protect;
     }
 
     @Override

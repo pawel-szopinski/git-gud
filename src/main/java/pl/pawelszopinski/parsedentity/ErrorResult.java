@@ -28,10 +28,6 @@ public class ErrorResult extends ParsedResult {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     @Override
     public String toString() {
         return "Error [item=" + item + ", number=" + number + ", message=" + message + "]";

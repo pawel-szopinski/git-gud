@@ -8,12 +8,10 @@ import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.Authenticate;
 import pl.pawelszopinski.option.Help;
 import pl.pawelszopinski.option.Verbose;
-import pl.pawelszopinski.parsedentity.ParsedResult;
+import pl.pawelszopinski.parsedentity.ParsedSearchResult;
 import pl.pawelszopinski.parsedentity.User;
-import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
-import pl.pawelszopinski.result.VerboseResult;
-import pl.pawelszopinski.result.paged.PagedParsedResultCompiler;
+import pl.pawelszopinski.result.paged.PagedParsedSearchResultCompiler;
 import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
 import java.security.InvalidParameterException;
@@ -62,7 +60,7 @@ public class SearchUsers implements Callable<Integer> {
 
             PrintHandler.printString(result);
         } else {
-            List<ParsedResult> result = getParsedResult(basicInfo);
+            List<ParsedSearchResult<User>> result = getParsedResult(basicInfo);
 
             PrintHandler.printParsedResult(result);
         }
@@ -70,14 +68,14 @@ public class SearchUsers implements Callable<Integer> {
         return 0;
     }
 
-    private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        ParsableResult resultCompiler = new PagedParsedResultCompiler(basicInfo);
+    private List<ParsedSearchResult<User>> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
+        PagedParsedSearchResultCompiler resultCompiler = new PagedParsedSearchResultCompiler(basicInfo);
 
-        return resultCompiler.compileParsedResult(User.class);
+        return resultCompiler.compileParsedSearchResult(User.class);
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        VerboseResult resultCompiler = new PagedVerboseResultCompiler(basicInfo);
+        PagedVerboseResultCompiler resultCompiler = new PagedVerboseResultCompiler(basicInfo);
 
         return resultCompiler.compileJsonResult();
     }

@@ -4,12 +4,11 @@ import com.cedarsoftware.util.io.JsonWriter;
 import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
-import pl.pawelszopinski.result.VerboseResult;
 import pl.pawelszopinski.util.LastPageExtractor;
 
 import java.net.http.HttpResponse;
 
-public class PagedVerboseResultCompiler implements VerboseResult {
+public class PagedVerboseResultCompiler {
 
     private final ResultCompilerBasicInfo basicInfo;
 
@@ -17,7 +16,6 @@ public class PagedVerboseResultCompiler implements VerboseResult {
         this.basicInfo = basicInfo;
     }
 
-    @Override
     public String compileJsonResult() throws Exception {
         StringBuilder result = new StringBuilder();
         HttpResponse<String> response;

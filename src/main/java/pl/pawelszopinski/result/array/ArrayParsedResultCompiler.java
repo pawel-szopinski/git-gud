@@ -4,14 +4,13 @@ import com.google.gson.Gson;
 import org.apache.http.HttpStatus;
 import pl.pawelszopinski.parsedentity.ErrorResult;
 import pl.pawelszopinski.parsedentity.ParsedResult;
-import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayParsedResultCompiler implements ParsableResult {
+public class ArrayParsedResultCompiler {
 
     private final Gson gson = new Gson();
     private final ResultCompilerBasicInfo basicInfo;
@@ -25,8 +24,7 @@ public class ArrayParsedResultCompiler implements ParsableResult {
         this.uriItemReplacement = uriItemReplacement;
     }
 
-    @Override
-    public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type)
+    public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type, boolean searchResult)
             throws Exception {
         List<ParsedResult> resultList = new ArrayList<>();
 

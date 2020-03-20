@@ -7,9 +7,7 @@ import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
 import pl.pawelszopinski.parsedentity.Commit;
 import pl.pawelszopinski.parsedentity.ParsedResult;
-import pl.pawelszopinski.result.ParsableResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
-import pl.pawelszopinski.result.VerboseResult;
 import pl.pawelszopinski.result.array.ArrayParsedResultCompiler;
 import pl.pawelszopinski.result.array.ArrayVerboseResultCompiler;
 
@@ -62,16 +60,16 @@ public class GetCommitInfo implements Callable<Integer> {
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        VerboseResult resultCompiler = new ArrayVerboseResultCompiler(
+        ArrayVerboseResultCompiler resultCompiler = new ArrayVerboseResultCompiler(
                 basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
-        return resultCompiler.compileJsonResult();
+        return resultCompiler.compileJsonResult(true);
     }
 
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
-        ParsableResult resultCompiler = new ArrayParsedResultCompiler(
+        ArrayParsedResultCompiler resultCompiler = new ArrayParsedResultCompiler(
                 basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
-        return resultCompiler.compileParsedResult(Commit.class);
+        return resultCompiler.compileParsedResult(Commit.class, true);
     }
 }

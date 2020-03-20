@@ -13,32 +13,16 @@ public class Commit extends ParsedResult {
         return sha;
     }
 
-    public void setSha(String sha) {
-        this.sha = sha;
-    }
-
     public Developer getAuthor() {
         return author;
-    }
-
-    public void setAuthor(Developer author) {
-        this.author = author;
     }
 
     public Developer getCommitter() {
         return committer;
     }
 
-    public void setCommitter(Developer committer) {
-        this.committer = committer;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     @Override

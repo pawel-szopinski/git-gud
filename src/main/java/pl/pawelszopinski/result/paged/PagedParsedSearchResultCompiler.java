@@ -6,25 +6,27 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
 import pl.pawelszopinski.parsedentity.ErrorResult;
 import pl.pawelszopinski.parsedentity.ParsedResult;
+import pl.pawelszopinski.parsedentity.ParsedSearchResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.util.LastPageExtractor;
 
 import java.net.http.HttpResponse;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PagedParsedResultCompiler {
+public class PagedParsedSearchResultCompiler {
 
     private final Gson gson = new Gson();
     private final ResultCompilerBasicInfo basicInfo;
 
-    public PagedParsedResultCompiler(ResultCompilerBasicInfo basicInfo) {
+    public PagedParsedSearchResultCompiler(ResultCompilerBasicInfo basicInfo) {
         this.basicInfo = basicInfo;
     }
 
-    public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type, boolean searchResult)
+    public <T extends ParsedResult> List<ParsedSearchResult<T>> compileParsedSearchResult(Class<T> type)
             throws Exception {
-        List<ParsedResult> resultList = new ArrayList<>();
+        List<ParsedSearchResult<T>> resultList = new ArrayList<>();
         HttpResponse<String> response;
         String linkHeader;
 
@@ -46,9 +48,20 @@ public class PagedParsedResultCompiler {
                         "Details: " + errorResult.toString());
             }
 
-            linkHeader = response.headers().firstValue("link").orElse(null);
+            ParsedSearchResult<T> pageObj = gson.fromJson(body,
+                    TypeToken.getParameterized(ParsedSearchResult.class, type).getType());
 
-            resultList.addAll(gson.fromJson(body, TypeToken.getParameterized(List.class, type).getType()));
+            //TODO
+            int resultLimit = 1000;
+            if (pageObj.getTotalCount() > resultLimit) {
+                throw new InvalidParameterException("Search result yields more than " + resultLimit +
+                        " records, which is current GitHub limit. Please refine your search, so you do " +
+                        "not miss any data in the output.");
+            }
+
+            resultList.add(pageObj);
+
+            linkHeader = response.headers().firstValue("link").orElse(null);
 
             pageNo++;
         } while (linkHeader != null && LastPageExtractor.getLastPage(linkHeader) >= pageNo);

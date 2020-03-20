@@ -46,7 +46,7 @@ public class GitGud implements Callable<Integer> {
 //                .execute("search-users", "-u", "m", "-l", "java", "-l", "python", "-L", "germany", "-r", ">10", "-a");
 
         int exitCode = createCommandLine()
-                .execute("search-repos", "-p", "snake", "-l", "java", "-l", "python", "-c", ">2020-03-15", "-a", "-v");
+                .execute("search-repos", "-p", "snake", "-l", "java", "-l", "python", "-c", ">2019-03-15", "-a");
 
 //        int exitCode = new CommandLine(new GitGud()).execute(
 //                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");

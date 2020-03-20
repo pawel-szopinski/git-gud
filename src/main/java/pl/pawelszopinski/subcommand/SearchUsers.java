@@ -25,20 +25,20 @@ public class SearchUsers implements Callable<Integer> {
 
     private StringBuilder uri = new StringBuilder().append("search/users?q=");
 
-    @Option(names = {"-u", "--user"}, paramLabel = "<name>", description = "Users' " +
+    @Option(names = {"-u", "--user"}, paramLabel = "<name>", description = "User's " +
             "account name or email should contain this phrase.")
     private String user;
 
     @Option(names = {"-r", "--no-of-repos"}, paramLabel = "<count>", description = "Number of repos " +
-            "users should have. Enter exact integer or operator with integer: " +
+            "a user should have. Enter exact integer or operator with integer: " +
             ">, <, >=, <=, .. (between, e.g. 10..30)")
     private String noOfRepos;
 
-    @Option(names = {"-L", "--location"}, paramLabel = "<name>", description = "Users' " +
+    @Option(names = {"-L", "--location"}, paramLabel = "<name>", description = "User's " +
             "location, e.g. Poland.")
     private String[] locations;
 
-    @Option(names = {"-l", "--language"}, paramLabel = "<name>", description = "Users' " +
+    @Option(names = {"-l", "--language"}, paramLabel = "<name>", description = "User " +
             "should have repositories written in this/these language(s).")
     private String[] languages;
 
@@ -53,7 +53,7 @@ public class SearchUsers implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        addSearchCriteriaToUri();
+        validateAndAddSearchCriteriaToUri();
 
         ResultCompilerBasicInfo basicInfo = new ResultCompilerBasicInfo(uri.toString(), auth.isAuth());
 
@@ -82,7 +82,7 @@ public class SearchUsers implements Callable<Integer> {
         return resultCompiler.compileJsonResult();
     }
 
-    private void addSearchCriteriaToUri() {
+    private void validateAndAddSearchCriteriaToUri() {
         if (StringUtils.isBlank(user) && StringUtils.isBlank(noOfRepos) &&
                 locations == null && languages == null) {
             throw new InvalidParameterException("At least one search criteria required!");
@@ -123,7 +123,7 @@ public class SearchUsers implements Callable<Integer> {
                 !noOfRepos.matches("(>=|<=|>|<)[\\d]+") &&
                 !noOfRepos.matches("[\\d]+\\.\\.[\\d]+")) {
             throw new InvalidParameterException(
-                    "Invalid value assigned to no-of-repos option!");
+                    "Invalid value assigned to --no-of-repos option!");
         }
     }
 }

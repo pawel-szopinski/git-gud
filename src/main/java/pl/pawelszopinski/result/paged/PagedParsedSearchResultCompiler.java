@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
+import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.parsedentity.ErrorResult;
 import pl.pawelszopinski.parsedentity.ParsedResult;
 import pl.pawelszopinski.parsedentity.ParsedSearchResult;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PagedParsedSearchResultCompiler {
+
+    private static final int SEARCH_LIMIT = Configuration.getSearchLimit();
 
     private final Gson gson = new Gson();
     private final ResultCompilerBasicInfo basicInfo;
@@ -51,10 +54,8 @@ public class PagedParsedSearchResultCompiler {
             ParsedSearchResult<T> pageObj = gson.fromJson(body,
                     TypeToken.getParameterized(ParsedSearchResult.class, type).getType());
 
-            //TODO
-            int resultLimit = 1000;
-            if (pageObj.getTotalCount() > resultLimit) {
-                throw new InvalidParameterException("Search result yields more than " + resultLimit +
+            if (pageObj.getTotalCount() > SEARCH_LIMIT) {
+                throw new InvalidParameterException("Search result yields more than " + SEARCH_LIMIT +
                         " records, which is current GitHub limit. Please refine your search, so you do " +
                         "not miss any data in the output.");
             }

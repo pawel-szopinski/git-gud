@@ -20,11 +20,12 @@ public class Configuration {
     private static final String CONFIG_FILE = "git-gud.properties";
     private static final String ADDRESS_KEY = "api.address";
     private static final String ACCEPT_HDR_KEY = "api.accept-header";
-    private static final String ACCEPT_HDR_START_VAL = "application/vnd.github.";
+    private static final String SEARCH_LIMIT_KEY = "api.search-limit";
     private static final String TOKEN_KEY = "user.token";
 
     private static String apiAddress;
     private static String acceptHeader;
+    private static String searchLimit;
     private static String userToken;
 
     private Configuration() {
@@ -35,7 +36,7 @@ public class Configuration {
     }
 
     private static void setApiAddress(String apiAddress) {
-        validatePropertyMissing(apiAddress, ADDRESS_KEY);
+        validatePropertyNotNullOrEmpty(apiAddress, ADDRESS_KEY);
 
         try {
             new URL(apiAddress);
@@ -52,15 +53,32 @@ public class Configuration {
     }
 
     private static void setAcceptHeader(String acceptHeader) {
-        validatePropertyMissing(acceptHeader, ACCEPT_HDR_KEY);
-
-        if (!acceptHeader.startsWith(ACCEPT_HDR_START_VAL)) {
-            throw new InvalidParameterException(
-                    MessageFormat.format("Key {0} should start with ''{1}''!",
-                            ACCEPT_HDR_KEY, ACCEPT_HDR_START_VAL));
-        }
+        validatePropertyNotNullOrEmpty(acceptHeader, ACCEPT_HDR_KEY);
 
         Configuration.acceptHeader = acceptHeader;
+    }
+
+    public static int getSearchLimit() {
+        return Integer.parseInt(searchLimit);
+    }
+
+    private static void setSearchLimit(String searchLimit) {
+        validatePropertyNotNullOrEmpty(searchLimit, SEARCH_LIMIT_KEY);
+
+        int searchLimitInt;
+        try {
+            searchLimitInt = Integer.parseInt(searchLimit);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(MessageFormat.format(
+                    "Key {0} is not an integer.", SEARCH_LIMIT_KEY));
+        }
+
+        if (searchLimitInt < 1) {
+            throw new InvalidParameterException(MessageFormat.format(
+                    "Key {0} should be greater than 0.", SEARCH_LIMIT_KEY));
+        }
+
+        Configuration.searchLimit = searchLimit;
     }
 
     public static String getUserToken() {
@@ -100,7 +118,7 @@ public class Configuration {
 
         try {
             assignValues(props);
-        } catch (InvalidParameterException e) {
+        } catch (InvalidParameterException | NumberFormatException e) {
             throw new ReadPropertiesException("Error while reading application property values.\n" +
                     "Additional info - " + e.getMessage());
         }
@@ -109,11 +127,12 @@ public class Configuration {
     private static void assignValues(Properties props) {
         setApiAddress(props.getProperty(ADDRESS_KEY));
         setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY));
+        setSearchLimit(props.getProperty(SEARCH_LIMIT_KEY));
         setUserToken(props.getProperty(TOKEN_KEY));
     }
 
-    private static void validatePropertyMissing(String value, String key) {
-        if (value == null) {
+    private static void validatePropertyNotNullOrEmpty(String value, String key) {
+        if (StringUtils.isBlank(value)) {
             throw new InvalidParameterException(
                     MessageFormat.format("Missing key {0}!", key));
         }

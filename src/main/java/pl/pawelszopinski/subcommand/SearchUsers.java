@@ -18,7 +18,7 @@ import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Command(name = "search-users", description = "Search for github users with different criteria.")
+@Command(name = "search-users", description = "Search for GitHub users with different criteria.")
 public class SearchUsers implements Callable<Integer> {
 
     private StringBuilder uri = new StringBuilder().append("search/users?q=");

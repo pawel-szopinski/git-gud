@@ -26,44 +26,9 @@ import java.util.concurrent.Callable;
 public class GitGud implements Callable<Integer> {
 
     public static void main(String[] args) {
-
         loadProperties();
 
-//        int exitCode = createCommandLine().execute(args);
-
-//        int exitCode = createCommandLine().execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "-a");
-
-//        int exitCode = createCommandLine()
-//                .execute("stargazers", "-o", "kfechter", "-r", "LegionY530Ubuntu", "--sort");
-
-//        int exitCode = createCommandLine()
-//                .execute("starred-by", "-u", "pawel-szopinski", "-s");
-
-//        int exitCode = createCommandLine()
-//                .execute("star-repo", "-r", "budgie-extras", "-o", "UbuntuBudgie");
-
-//        int exitCode = createCommandLine()
-//                .execute("search-users", "-u", "m", "-l", "java", "-l", "python", "-L", "germany", "-r", ">10", "-a");
-
-        int exitCode = createCommandLine()
-                .execute("search-repos", "-p", "snake", "-l", "java", "-l", "python", "-c", ">2019-03-15", "-a");
-
-//        int exitCode = new CommandLine(new GitGud()).execute(
-//                "stargazers", "-o", "cschool-cinema", "-r", "cinema-api", "-a");
-
-//        int exitCode = createCommandLine().execute(
-//                "stargazers", "-h");
-
-//        int exitCode = createCommandLine()
-//                .execute("commit-info", "-o", "pawel-szopinski", "-r", "implementers-toolbox",
-//                        "e00b9d96964d110e09fdd8816c8b5ce0efc6b40e",
-//                        "8fe850f5a5c339e462f682890892846fb02b29b4", "x", "-v");
-
-//        int exitCode = createCommandLine().execute("commit-info", "-o", "pawel-szopinski", "-r",
-//                "loginapp", "0dd89aa0437da3141f371c96c1234a76cc404c92",
-//                "d5a33fc7e4ef29618438ae9321c55530a8014f22", "-a");
-
-//        int exitCode = new CommandLine(new GitGud()).execute("commit-info", "-h");
+        int exitCode = createCommandLine().execute(args);
 
         System.exit(exitCode);
     }
@@ -112,10 +77,10 @@ public class GitGud implements Callable<Integer> {
     private void showAppLogo() {
         IRender render = new Render();
         IContextBuilder builder = render.newBuilder();
-        builder.width(90).height(12);
+        builder.width(120).height(12);
         builder.element(new PseudoText("Git Gud"));
         ICanvas canvas = render.render(builder.build());
         String s = canvas.getText();
-        System.out.println(s);
+        PrintHandler.printString(s);
     }
 }

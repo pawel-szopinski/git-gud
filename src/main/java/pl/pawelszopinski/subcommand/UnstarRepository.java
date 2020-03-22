@@ -13,8 +13,8 @@ import pl.pawelszopinski.option.Repository;
 import java.text.MessageFormat;
 import java.util.concurrent.Callable;
 
-@Command(name = "unstar-repo", description = "Unstar a given repository.\n" +
-        "IMPORTANT: authentication data is required to be provided in app properties file.")
+@Command(name = "unstar-repo", description = "Unstar a repository " +
+        "(auth token is required in .properties file).")
 public class UnstarRepository implements Callable<Integer> {
 
     private String uri = "user/starred/{owner}/{repo}";

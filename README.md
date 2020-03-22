@@ -1,10 +1,10 @@
-#Git Gud
+# Git Gud
  
 A CLI application that allows pulling various information from GitHub REST API.
 
 ---
 
-##Available Commands
+## Available Commands
 - commit-info   - Get info about one or more commits.
 - search-users  - Search for GitHub users with different criteria.
 - stargazers    - Get users starring a repository.
@@ -14,7 +14,7 @@ A CLI application that allows pulling various information from GitHub REST API.
 - branches      - Get branches available in a repository.
 - search-repos  - Search for GitHub repositories with different criteria.
 
-####Examples
+#### Examples
 ```
 commit-info -v -o pawel-szopinski -r implementers-toolbox e00b9d96964d110e09fdd8816c8b5ce0efc6b40e
 search-users -u m -l java -l python -L germany -r ">10"
@@ -29,7 +29,7 @@ Tip: use command name with ```-h``` parameter to discover all available options.
 
 ---
 
-##Building and running the application
+## Building and running the application
 
 The app requires Git, Apache Maven and JDK **11** to build and run.
 
@@ -49,14 +49,14 @@ $ cd target
 # Run the app
 $ java -jar git-gud-1.0.jar
 ```
-####Important
+#### Important
 - If you plan on moving the application to a different folder and running it from there, please make sure to also copy ```git-gud.properties``` file. Without it the application won't run.
 - Also, regarding the ```git-gud.properties``` file - some commands require auth token e.g. ```star-repo```, which can be added there. If you exceed GitHub's request limit, adding the auth token will allow you to continue executing more commands.
 - If you plan on running the application from an IDE of choice, make sure to execute ```mvn compile``` beforehand. It will copy the ```git-gud.properties``` file to ```target``` folder.
 
 ---
 
-##The app was build with
+## The app was build with
 - [picocli](https://github.com/remkop/picocli) - Command line interface
 - [Maven](https://maven.apache.org/) - Dependency Management
 - [json-io](https://github.com/jdereg/json-io) - JSON formatting for verbose output

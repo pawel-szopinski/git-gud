@@ -60,8 +60,7 @@ public class HttpRequestHandler {
             httpBuilder.setHeader("Authorization", "token " + USER_TOKEN);
         } else if (authenticate && StringUtils.isEmpty(USER_TOKEN)) {
             throw new IllegalArgumentException("Authentication required by command or " +
-                    "authentication flag explicitly mentioned, " +
-                    "but details are missing/incomplete.");
+                    "authentication flag explicitly mentioned, but token is missing in .properties file.");
         }
     }
 }

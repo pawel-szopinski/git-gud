@@ -35,13 +35,13 @@ public class Commit extends ParsedResult {
     }
 
     @Override
-    public int compareTo(@Nonnull ParsedResult o) {
-        if (this == o) {
+    public int compareTo(@Nonnull ParsedResult parsedResult) {
+        if (this == parsedResult) {
             return 0;
         }
 
-        Commit c = (Commit) o;
+        Commit commit = (Commit) parsedResult;
 
-        return this.sha.compareToIgnoreCase(c.sha);
+        return this.sha.compareToIgnoreCase(commit.sha);
     }
 }

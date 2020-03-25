@@ -26,17 +26,17 @@ public class Repository extends ParsedResult {
     }
 
     @Override
-    public int compareTo(@Nonnull ParsedResult o) {
-        if (this == o) {
+    public int compareTo(@Nonnull ParsedResult parsedResult) {
+        if (this == parsedResult) {
             return 0;
         }
 
-        Repository r = (Repository) o;
+        Repository repository = (Repository) parsedResult;
 
-        if (this.name.equals(r.name)) {
-            return this.owner.getLogin().compareToIgnoreCase(r.owner.getLogin());
+        if (this.name.equals(repository.name)) {
+            return this.owner.getLogin().compareToIgnoreCase(repository.owner.getLogin());
         }
-        return this.name.compareToIgnoreCase(r.name);
+        return this.name.compareToIgnoreCase(repository.name);
     }
 
     @Override

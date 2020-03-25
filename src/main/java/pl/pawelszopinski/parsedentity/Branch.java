@@ -25,13 +25,13 @@ public class Branch extends ParsedResult {
     }
 
     @Override
-    public int compareTo(@Nonnull ParsedResult o) {
-        if (this == o) {
+    public int compareTo(@Nonnull ParsedResult parsedResult) {
+        if (this == parsedResult) {
             return 0;
         }
 
-        Branch b = (Branch) o;
+        Branch branch = (Branch) parsedResult;
 
-        return this.name.compareToIgnoreCase(b.name);
+        return this.name.compareToIgnoreCase(branch.name);
     }
 }

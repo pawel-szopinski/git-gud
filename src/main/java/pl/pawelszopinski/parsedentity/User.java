@@ -26,13 +26,13 @@ public class User extends ParsedResult {
     }
 
     @Override
-    public int compareTo(@Nonnull ParsedResult o) {
-        if (this == o) {
+    public int compareTo(@Nonnull ParsedResult parsedResult) {
+        if (this == parsedResult) {
             return 0;
         }
 
-        User u = (User) o;
+        User user = (User) parsedResult;
 
-        return this.login.compareToIgnoreCase(u.login);
+        return this.login.compareToIgnoreCase(user.login);
     }
 }

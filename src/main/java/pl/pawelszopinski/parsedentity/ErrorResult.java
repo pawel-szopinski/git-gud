@@ -34,13 +34,13 @@ public class ErrorResult extends ParsedResult {
     }
 
     @Override
-    public int compareTo(@Nonnull ParsedResult o) {
-        if (this == o) {
+    public int compareTo(@Nonnull ParsedResult parsedResult) {
+        if (this == parsedResult) {
             return 0;
         }
 
-        ErrorResult e = (ErrorResult) o;
+        ErrorResult errorResult = (ErrorResult) parsedResult;
 
-        return this.item.compareToIgnoreCase(e.item);
+        return this.item.compareToIgnoreCase(errorResult.item);
     }
 }

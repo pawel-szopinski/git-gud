@@ -105,11 +105,8 @@ public class Configuration {
 
         String propertiesPath = jarPath.getParent() + "/";
 
-        Properties props;
-        try {
-            InputStream input = new FileInputStream(propertiesPath + CONFIG_FILE);
-
-            props = new PropertiesExtended();
+        Properties props = new PropertiesExtended();
+        try (InputStream input = new FileInputStream(propertiesPath + CONFIG_FILE)) {
             props.load(input);
         } catch (IOException e) {
             throw new ReadPropertiesException("Could not read application properties file!\n" +

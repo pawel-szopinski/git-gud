@@ -2,6 +2,7 @@ package pl.pawelszopinski.handler;
 
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHeaders;
 import pl.pawelszopinski.config.Configuration;
 
 import java.net.ConnectException;
@@ -17,27 +18,25 @@ public class HttpRequestHandler {
             .version(HttpClient.Version.HTTP_1_1)
             .build();
 
-    private static final String USER_TOKEN = Configuration.getUserToken();
-    private static final String API_ADDRESS = Configuration.getApiAddress();
-
     private HttpRequest.Builder httpBuilder = HttpRequest.newBuilder()
-            .header("Accept", Configuration.getAcceptHeader());
+            .header(HttpHeaders.ACCEPT, Configuration.getAcceptHeader());
 
     public HttpResponse<String> sendGet(String uri, boolean authenticate) throws Exception {
-        httpBuilder.GET().uri(URI.create(URIUtil.encodeQuery(API_ADDRESS + uri)));
+        httpBuilder.GET().uri(URI.create(URIUtil.encodeQuery(
+                Configuration.getApiAddress() + uri)));
 
         return sendRequest(authenticate);
     }
 
     public int sendPut(String uri) throws Exception {
         httpBuilder.PUT(HttpRequest.BodyPublishers.noBody())
-                .uri(URI.create(URIUtil.encodeQuery(API_ADDRESS + uri)));
+                .uri(URI.create(URIUtil.encodeQuery(Configuration.getApiAddress() + uri)));
 
         return sendRequest(true).statusCode();
     }
 
     public int sendDelete(String uri) throws Exception {
-        httpBuilder.DELETE().uri(URI.create(URIUtil.encodeQuery(API_ADDRESS + uri)));
+        httpBuilder.DELETE().uri(URI.create(URIUtil.encodeQuery(Configuration.getApiAddress() + uri)));
 
         return sendRequest(true).statusCode();
     }
@@ -56,9 +55,9 @@ public class HttpRequestHandler {
     }
 
     private void addAuthHeaderIfAuthFlagTrue(HttpRequest.Builder httpBuilder, boolean authenticate) {
-        if (authenticate && StringUtils.isNotEmpty(USER_TOKEN)) {
-            httpBuilder.setHeader("Authorization", "token " + USER_TOKEN);
-        } else if (authenticate && StringUtils.isEmpty(USER_TOKEN)) {
+        if (authenticate && StringUtils.isNotEmpty(Configuration.getUserToken())) {
+            httpBuilder.setHeader(HttpHeaders.AUTHORIZATION, "token " + Configuration.getUserToken());
+        } else if (authenticate && StringUtils.isEmpty(Configuration.getUserToken())) {
             throw new IllegalArgumentException("Authentication required by command or " +
                     "authentication flag explicitly mentioned, but token is missing in .properties file.");
         }

@@ -25,7 +25,7 @@ public class Configuration {
 
     private static String apiAddress;
     private static String acceptHeader;
-    private static String searchLimit;
+    private static int searchLimit;
     private static String userToken;
 
     private Configuration() {
@@ -59,7 +59,7 @@ public class Configuration {
     }
 
     public static int getSearchLimit() {
-        return Integer.parseInt(searchLimit);
+        return searchLimit;
     }
 
     private static void setSearchLimit(String searchLimit) {
@@ -78,7 +78,7 @@ public class Configuration {
                     "Key {0} should be greater than 0.", SEARCH_LIMIT_KEY));
         }
 
-        Configuration.searchLimit = searchLimit;
+        Configuration.searchLimit = searchLimitInt;
     }
 
     public static String getUserToken() {

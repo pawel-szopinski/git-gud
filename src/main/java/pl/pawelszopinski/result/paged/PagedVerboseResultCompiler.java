@@ -2,7 +2,6 @@ package pl.pawelszopinski.result.paged;
 
 import com.cedarsoftware.util.io.JsonWriter;
 import org.apache.http.HttpException;
-import org.apache.http.HttpStatus;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.util.LastPageExtractor;
 
@@ -30,7 +29,7 @@ public class PagedVerboseResultCompiler {
             String body = response.body();
             int statusCode = response.statusCode();
 
-            if (statusCode != HttpStatus.SC_OK) {
+            if (statusCode / 100 != 2) {
                 throw new HttpException("Error while fetching data from GitHub. " +
                         "Page " + pageNo + " has thrown an error: " + body);
             }

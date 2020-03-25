@@ -1,7 +1,6 @@
 package pl.pawelszopinski.result.array;
 
 import com.google.gson.Gson;
-import org.apache.http.HttpStatus;
 import pl.pawelszopinski.parsedentity.ErrorResult;
 import pl.pawelszopinski.parsedentity.ParsedResult;
 import pl.pawelszopinski.result.ResultCompilerBasicInfo;
@@ -45,7 +44,7 @@ public class ArrayParsedResultCompiler {
         String body = response.body();
         int statusCode = response.statusCode();
 
-        if (statusCode == HttpStatus.SC_OK) {
+        if (statusCode / 100 != 2) {
             return gson.fromJson(body, type);
         } else {
             ErrorResult errorResult = gson.fromJson(body, ErrorResult.class);

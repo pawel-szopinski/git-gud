@@ -3,7 +3,6 @@ package pl.pawelszopinski.result.paged;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpException;
-import org.apache.http.HttpStatus;
 import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.parsedentity.ErrorResult;
 import pl.pawelszopinski.parsedentity.ParsedResult;
@@ -42,7 +41,7 @@ public class PagedParsedSearchResultCompiler {
             String body = response.body();
             int statusCode = response.statusCode();
 
-            if (statusCode != HttpStatus.SC_OK) {
+            if (statusCode / 100 != 2) {
                 ErrorResult errorResult = gson.fromJson(body, ErrorResult.class);
                 errorResult.setItem("Result page " + pageNo);
                 errorResult.setNumber(statusCode);

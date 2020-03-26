@@ -35,64 +35,16 @@ public class Configuration {
         return apiAddress;
     }
 
-    private static void setApiAddress(String apiAddress) {
-        validatePropertyNotNullOrEmpty(apiAddress, ADDRESS_KEY);
-
-        try {
-            new URL(apiAddress);
-        } catch (MalformedURLException e) {
-            throw new InvalidParameterException(
-                    MessageFormat.format("Malformed URL in key {0}!", ADDRESS_KEY));
-        }
-
-        Configuration.apiAddress = apiAddress;
-    }
-
     public static String getAcceptHeader() {
         return acceptHeader;
-    }
-
-    private static void setAcceptHeader(String acceptHeader) {
-        validatePropertyNotNullOrEmpty(acceptHeader, ACCEPT_HDR_KEY);
-
-        Configuration.acceptHeader = acceptHeader;
     }
 
     public static int getSearchLimit() {
         return searchLimit;
     }
 
-    private static void setSearchLimit(String searchLimit) {
-        validatePropertyNotNullOrEmpty(searchLimit, SEARCH_LIMIT_KEY);
-
-        int searchLimitInt;
-        try {
-            searchLimitInt = Integer.parseInt(searchLimit);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException(MessageFormat.format(
-                    "Key {0} is not an integer.", SEARCH_LIMIT_KEY));
-        }
-
-        if (searchLimitInt < 1) {
-            throw new InvalidParameterException(MessageFormat.format(
-                    "Key {0} should be greater than 0.", SEARCH_LIMIT_KEY));
-        }
-
-        Configuration.searchLimit = searchLimitInt;
-    }
-
     public static String getUserToken() {
         return userToken;
-    }
-
-    private static void setUserToken(String userToken) {
-        if (StringUtils.isNotEmpty(userToken) && !userToken.matches("[0-9a-z]{40}")) {
-            throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
-                    "- consist only of lowercase alphanumeric characters\n" +
-                    "- have length of exactly 40 characters", TOKEN_KEY));
-        }
-
-        Configuration.userToken = userToken;
     }
 
     public static void readFromFile() {
@@ -126,6 +78,54 @@ public class Configuration {
         setAcceptHeader(props.getProperty(ACCEPT_HDR_KEY));
         setSearchLimit(props.getProperty(SEARCH_LIMIT_KEY));
         setUserToken(props.getProperty(TOKEN_KEY));
+    }
+
+    private static void setApiAddress(String apiAddress) {
+        validatePropertyNotNullOrEmpty(apiAddress, ADDRESS_KEY);
+
+        try {
+            new URL(apiAddress);
+        } catch (MalformedURLException e) {
+            throw new InvalidParameterException(
+                    MessageFormat.format("Malformed URL in key {0}!", ADDRESS_KEY));
+        }
+
+        Configuration.apiAddress = apiAddress;
+    }
+
+    private static void setAcceptHeader(String acceptHeader) {
+        validatePropertyNotNullOrEmpty(acceptHeader, ACCEPT_HDR_KEY);
+
+        Configuration.acceptHeader = acceptHeader;
+    }
+
+    private static void setSearchLimit(String searchLimit) {
+        validatePropertyNotNullOrEmpty(searchLimit, SEARCH_LIMIT_KEY);
+
+        int searchLimitInt;
+        try {
+            searchLimitInt = Integer.parseInt(searchLimit);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(MessageFormat.format(
+                    "Key {0} is not an integer.", SEARCH_LIMIT_KEY));
+        }
+
+        if (searchLimitInt < 1) {
+            throw new InvalidParameterException(MessageFormat.format(
+                    "Key {0} should be greater than 0.", SEARCH_LIMIT_KEY));
+        }
+
+        Configuration.searchLimit = searchLimitInt;
+    }
+
+    private static void setUserToken(String userToken) {
+        if (StringUtils.isNotEmpty(userToken) && !userToken.matches("[0-9a-z]{40}")) {
+            throw new InvalidParameterException(MessageFormat.format("Key {0} should:\n" +
+                    "- consist only of lowercase alphanumeric characters\n" +
+                    "- have length of exactly 40 characters", TOKEN_KEY));
+        }
+
+        Configuration.userToken = userToken;
     }
 
     private static void validatePropertyNotNullOrEmpty(String value, String key) {

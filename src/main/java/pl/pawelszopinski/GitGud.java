@@ -12,7 +12,7 @@ import pl.pawelszopinski.config.Configuration;
 import pl.pawelszopinski.exception.ReadPropertiesException;
 import pl.pawelszopinski.handler.CmdLineExceptionMsgHandler;
 import pl.pawelszopinski.handler.PrintHandler;
-import pl.pawelszopinski.util.PomVersionProvider;
+import pl.pawelszopinski.util.VersionProvider;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
         description = "An application that allows pulling various information from " +
                 "GitHub REST API.",
         mixinStandardHelpOptions = true,
-        versionProvider = PomVersionProvider.class)
+        versionProvider = VersionProvider.class)
 public class GitGud implements Callable<Integer> {
 
     public static void main(String[] args) {

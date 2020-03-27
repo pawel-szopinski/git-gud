@@ -1,16 +1,17 @@
 package pl.pawelszopinski.handler;
 
-import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import pl.pawelszopinski.config.Configuration;
 
 import java.net.ConnectException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
+import java.nio.charset.StandardCharsets;
 
 public class HttpRequestHandler {
 
@@ -22,28 +23,31 @@ public class HttpRequestHandler {
             .header(HttpHeaders.ACCEPT, Configuration.getAcceptHeader());
 
     public HttpResponse<String> sendGet(String uri, boolean authenticate) throws Exception {
-        httpBuilder.GET().uri(URI.create(URIUtil.encodeQuery(
-                Configuration.getApiAddress() + uri)));
+        httpBuilder.GET();
 
-        return sendRequest(authenticate);
+        return sendRequest(uri, authenticate);
     }
 
     public int sendPut(String uri) throws Exception {
-        httpBuilder.PUT(HttpRequest.BodyPublishers.noBody())
-                .uri(URI.create(URIUtil.encodeQuery(Configuration.getApiAddress() + uri)));
+        httpBuilder.PUT(HttpRequest.BodyPublishers.noBody());
 
-        return sendRequest(true).statusCode();
+        return sendRequest(uri, true).statusCode();
     }
 
     public int sendDelete(String uri) throws Exception {
-        httpBuilder.DELETE().uri(URI.create(URIUtil.encodeQuery(Configuration.getApiAddress() + uri)));
+        httpBuilder.DELETE();
 
-        return sendRequest(true).statusCode();
+        return sendRequest(uri, true).statusCode();
     }
 
-    private HttpResponse<String> sendRequest(boolean authenticate) throws Exception {
+    private HttpResponse<String> sendRequest(String uri, boolean authenticate) throws Exception {
         addAuthHeaderIfAuthFlagTrue(httpBuilder, authenticate);
-        HttpRequest request = httpBuilder.build();
+
+        String finalURL = Configuration.getApiAddress() + uri;
+
+        HttpRequest request = httpBuilder
+                .uri(URI.create(URLEncoder.encode(finalURL, StandardCharsets.UTF_8)))
+                .build();
 
         try {
             return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());

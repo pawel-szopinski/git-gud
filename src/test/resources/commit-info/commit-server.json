@@ -1,0 +1,34 @@
+{
+  "sha": "9fa8b2ad225452fc8ccb18ae76472803f3bf807c",
+  "node_id": "MDY6Q29tbWl0MjM2Mjk1OTM0OjlmYThiMmFkMjI1NDUyZmM4Y2NiMThhZTc2NDcyODAzZjNiZjgwN2M=",
+  "url": "https://api.github.com/repos/cschool-cinema/kinex/git/commits/9fa8b2ad225452fc8ccb18ae76472803f3bf807c",
+  "html_url": "https://github.com/cschool-cinema/kinex/commit/9fa8b2ad225452fc8ccb18ae76472803f3bf807c",
+  "author": {
+    "name": "pawel-szopinski",
+    "email": "szopinski.p@gmail.com",
+    "date": "2020-02-02T09:24:02Z"
+  },
+  "committer": {
+    "name": "pawel-szopinski",
+    "email": "szopinski.p@gmail.com",
+    "date": "2020-02-02T09:24:02Z"
+  },
+  "tree": {
+    "sha": "7ea5ec1386e8c03bb59a466d887ea57cc2a3cddc",
+    "url": "https://api.github.com/repos/cschool-cinema/kinex/git/trees/7ea5ec1386e8c03bb59a466d887ea57cc2a3cddc"
+  },
+  "message": "add show client tickets",
+  "parents": [
+    {
+      "sha": "83e2c3a48b4aa61bd2f6a92d9c3dcd5bd1e053c4",
+      "url": "https://api.github.com/repos/cschool-cinema/kinex/git/commits/83e2c3a48b4aa61bd2f6a92d9c3dcd5bd1e053c4",
+      "html_url": "https://github.com/cschool-cinema/kinex/commit/83e2c3a48b4aa61bd2f6a92d9c3dcd5bd1e053c4"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null
+  }
+}

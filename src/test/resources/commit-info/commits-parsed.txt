@@ -1,0 +1,2 @@
+Error [item=xxx, number=404, message=Not Found]
+Commit [sha=9fa8b2ad225452fc8ccb18ae76472803f3bf807c, author=[name=pawel-szopinski, email=szopinski.p@gmail.com, date=2020-02-02T09:24:02Z], committer=[name=pawel-szopinski, email=szopinski.p@gmail.com, date=2020-02-02T09:24:02Z], message=add show client tickets]

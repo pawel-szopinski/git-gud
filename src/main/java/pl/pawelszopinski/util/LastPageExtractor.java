@@ -9,6 +9,10 @@ public class LastPageExtractor {
             Pattern.compile("page=\\d+>; rel=\"last\"");
 
     public static int getLastPage(String linkHeader) {
+        if (linkHeader == null) {
+            return 0;
+        }
+
         Matcher m = LAST_PAGE_PATTERN.matcher(linkHeader);
 
         if (!m.find()) {

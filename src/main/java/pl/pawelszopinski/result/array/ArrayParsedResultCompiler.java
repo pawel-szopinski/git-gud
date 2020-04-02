@@ -44,7 +44,7 @@ public class ArrayParsedResultCompiler {
         String body = response.body();
         int statusCode = response.statusCode();
 
-        if (statusCode / 100 != 2) {
+        if (statusCode / 100 == 2) {
             return gson.fromJson(body, type);
         } else {
             ErrorResult errorResult = gson.fromJson(body, ErrorResult.class);

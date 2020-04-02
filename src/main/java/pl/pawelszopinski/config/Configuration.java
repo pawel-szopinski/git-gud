@@ -1,12 +1,15 @@
 package pl.pawelszopinski.config;
 
 import org.apache.commons.lang3.StringUtils;
+import pl.pawelszopinski.GitGud;
 import pl.pawelszopinski.exception.ReadPropertiesException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
@@ -14,6 +17,7 @@ import java.util.Properties;
 
 public class Configuration {
 
+    private static final String CONFIG_FILE = "git-gud.properties";
     private static final String ADDRESS_KEY = "api.address";
     private static final String ACCEPT_HDR_KEY = "api.accept-header";
     private static final String SEARCH_LIMIT_KEY = "api.search-limit";
@@ -43,9 +47,20 @@ public class Configuration {
         return userToken;
     }
 
-    public static void readFromFile(String filePath) {
+    public static void readFromFile(String propertiesPath) {
+        if (propertiesPath == null) {
+            File jarPath;
+            try {
+                jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            } catch (URISyntaxException e) {
+                throw new ReadPropertiesException(e.getMessage());
+            }
+
+            propertiesPath = jarPath.getParent() + "/" + CONFIG_FILE;
+        }
+
         Properties props = new PropertiesExtended();
-        try (InputStream input = new FileInputStream(filePath)) {
+        try (InputStream input = new FileInputStream(propertiesPath)) {
             props.load(input);
         } catch (IOException e) {
             throw new ReadPropertiesException("Could not read application properties file!\n" +

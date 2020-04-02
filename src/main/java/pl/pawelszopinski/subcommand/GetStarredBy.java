@@ -2,7 +2,9 @@ package pl.pawelszopinski.subcommand;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.Authenticate;
 import pl.pawelszopinski.option.Help;
@@ -13,6 +15,8 @@ import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.result.paged.PagedParsedResultCompiler;
 import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,7 +24,10 @@ import java.util.concurrent.Callable;
 @Command(name = "starred-by", description = "Get repositories starred by a user.")
 public class GetStarredBy implements Callable<Integer> {
 
-    private String uri = "users/{username}/starred?per_page=100&page=";
+    private String uri = "/users/{username}/starred?per_page=100&page=";
+
+    @Spec
+    private CommandSpec spec;
 
     @Option(names = {"-u", "--user"}, required = true, paramLabel = "<name>", description = "Users's " +
             "account name.")
@@ -41,14 +48,14 @@ public class GetStarredBy implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        uri = uri.replace("{username}", userName);
+        uri = uri.replace("{username}", URLEncoder.encode(userName, StandardCharsets.UTF_8));
 
         ResultCompilerBasicInfo basicInfo = new ResultCompilerBasicInfo(uri, auth.isAuth());
 
         if (verbose.isVerbose()) {
             String result = getVerboseResult(basicInfo);
 
-            PrintHandler.printString(result);
+            PrintHandler.printString(result, spec);
         } else {
             List<ParsedResult> result = getParsedResult(basicInfo);
 
@@ -56,7 +63,7 @@ public class GetStarredBy implements Callable<Integer> {
                 Collections.sort(result);
             }
 
-            PrintHandler.printParsedResult(result);
+            PrintHandler.printParsedResult(result, spec);
         }
 
         return 0;

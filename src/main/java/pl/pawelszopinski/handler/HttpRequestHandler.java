@@ -6,12 +6,10 @@ import pl.pawelszopinski.config.Configuration;
 
 import java.net.ConnectException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
-import java.nio.charset.StandardCharsets;
 
 public class HttpRequestHandler {
 
@@ -43,16 +41,14 @@ public class HttpRequestHandler {
     private HttpResponse<String> sendRequest(String uri, boolean authenticate) throws Exception {
         addAuthHeaderIfAuthFlagTrue(httpBuilder, authenticate);
 
-        String finalURL = Configuration.getApiAddress() + uri;
-
         HttpRequest request = httpBuilder
-                .uri(URI.create(URLEncoder.encode(finalURL, StandardCharsets.UTF_8)))
+                .uri(URI.create(Configuration.getApiAddress() + uri))
                 .build();
 
         try {
             return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (ConnectException e) {
-            throw new ConnectException("There seems to be no connection to the internet.");
+            throw new ConnectException("There seems to be a problem with connecting to remote host.");
         } catch (HttpTimeoutException e) {
             throw new HttpTimeoutException("Your request timed out. Please try again.");
         }

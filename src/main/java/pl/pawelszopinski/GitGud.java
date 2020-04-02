@@ -14,8 +14,10 @@ import pl.pawelszopinski.handler.CmdLineExceptionMsgHandler;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.util.VersionProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.util.concurrent.Callable;
 
 @Command(name = "java -jar /path/to/app.jar",
@@ -42,8 +44,18 @@ public class GitGud implements Callable<Integer> {
     }
 
     private static void loadProperties() {
+        File jarPath = null;
         try {
-            Configuration.readFromFile();
+            jarPath = new File(GitGud.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            PrintHandler.printException(e.getMessage());
+            System.exit(1);
+        }
+
+        String propertiesPath = jarPath.getParent() + "/" + "git-gud.properties";
+
+        try {
+            Configuration.readFromFile(propertiesPath);
         } catch (ReadPropertiesException e) {
             PrintHandler.printException(e.getMessage());
             System.exit(1);
@@ -81,6 +93,6 @@ public class GitGud implements Callable<Integer> {
         builder.element(new PseudoText("Git Gud"));
         ICanvas canvas = render.render(builder.build());
         String s = canvas.getText();
-        PrintHandler.printString(s);
+        System.out.println(s);
     }
 }

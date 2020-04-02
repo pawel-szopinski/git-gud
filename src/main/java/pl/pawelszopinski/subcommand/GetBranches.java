@@ -2,7 +2,9 @@ package pl.pawelszopinski.subcommand;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.*;
 import pl.pawelszopinski.parsedentity.Branch;
@@ -11,6 +13,8 @@ import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.result.paged.PagedParsedResultCompiler;
 import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -18,7 +22,10 @@ import java.util.concurrent.Callable;
 @Command(name = "branches", description = "Get branches available in a repository.")
 public class GetBranches implements Callable<Integer> {
 
-    private String uri = "repos/{owner}/{repo}/branches?per_page=100&page=";
+    private String uri = "/repos/{owner}/{repo}/branches?per_page=100&page=";
+
+    @Spec
+    private CommandSpec spec;
 
     @Mixin
     private Owner owner;
@@ -41,15 +48,18 @@ public class GetBranches implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        uri = uri.replace("{owner}", owner.getOwner())
-                .replace("{repo}", repository.getRepository());
+        uri = uri
+                .replace("{owner}",
+                        URLEncoder.encode(owner.getOwner(), StandardCharsets.UTF_8))
+                .replace("{repo}",
+                        URLEncoder.encode(repository.getRepository(), StandardCharsets.UTF_8));
 
         ResultCompilerBasicInfo basicInfo = new ResultCompilerBasicInfo(uri, auth.isAuth());
 
         if (verbose.isVerbose()) {
             String result = getVerboseResult(basicInfo);
 
-            PrintHandler.printString(result);
+            PrintHandler.printString(result, spec);
         } else {
             List<ParsedResult> result = getParsedResult(basicInfo);
 
@@ -57,7 +67,7 @@ public class GetBranches implements Callable<Integer> {
                 Collections.sort(result);
             }
 
-            PrintHandler.printParsedResult(result);
+            PrintHandler.printParsedResult(result, spec);
         }
 
         return 0;

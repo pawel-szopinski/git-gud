@@ -4,12 +4,16 @@ import org.apache.http.HttpException;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Spec;
 import pl.pawelszopinski.handler.HttpRequestHandler;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.Help;
 import pl.pawelszopinski.option.Owner;
 import pl.pawelszopinski.option.Repository;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.concurrent.Callable;
 
@@ -17,7 +21,10 @@ import java.util.concurrent.Callable;
         "(auth token is required in .properties file).")
 public class StarRepository implements Callable<Integer> {
 
-    private String uri = "user/starred/{owner}/{repo}";
+    private String uri = "/user/starred/{owner}/{repo}";
+
+    @Spec
+    private CommandSpec spec;
 
     @Mixin
     private Owner owner;
@@ -30,8 +37,11 @@ public class StarRepository implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        uri = uri.replace("{owner}", owner.getOwner())
-                .replace("{repo}", repository.getRepository());
+        uri = uri
+                .replace("{owner}",
+                        URLEncoder.encode(owner.getOwner(), StandardCharsets.UTF_8))
+                .replace("{repo}",
+                        URLEncoder.encode(repository.getRepository(), StandardCharsets.UTF_8));
 
         HttpRequestHandler httpRequest = new HttpRequestHandler();
 
@@ -43,7 +53,7 @@ public class StarRepository implements Callable<Integer> {
                     EnglishReasonPhraseCatalog.INSTANCE.getReason(statusCode, null)));
         }
 
-        PrintHandler.printString("Repository has been starred successfully.");
+        PrintHandler.printString("Repository has been starred successfully.", spec);
 
         return 0;
     }

@@ -3,7 +3,9 @@ package pl.pawelszopinski.subcommand;
 import org.apache.commons.lang3.StringUtils;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.Authenticate;
 import pl.pawelszopinski.option.Help;
@@ -14,6 +16,8 @@ import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.result.paged.PagedParsedSearchResultCompiler;
 import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -21,7 +25,10 @@ import java.util.concurrent.Callable;
 @Command(name = "search-users", description = "Search for GitHub users with different criteria.")
 public class SearchUsers implements Callable<Integer> {
 
-    private StringBuilder uri = new StringBuilder().append("search/users?q=");
+    private StringBuilder uri = new StringBuilder().append("/search/users?q=");
+
+    @Spec
+    private CommandSpec spec;
 
     @Option(names = {"-u", "--user"}, paramLabel = "<name>", description = "User's " +
             "account name or email should contain this phrase.")
@@ -58,11 +65,11 @@ public class SearchUsers implements Callable<Integer> {
         if (verbose.isVerbose()) {
             String result = getVerboseResult(basicInfo);
 
-            PrintHandler.printString(result);
+            PrintHandler.printString(result, spec);
         } else {
             List<ParsedSearchResult<User>> result = getParsedResult(basicInfo);
 
-            PrintHandler.printParsedResult(result);
+            PrintHandler.printParsedResult(result, spec);
         }
 
         return 0;
@@ -87,18 +94,19 @@ public class SearchUsers implements Callable<Integer> {
         }
 
         if (StringUtils.isNotBlank(user)) {
-            uri.append(user).append("+");
+            uri.append(URLEncoder.encode(user, StandardCharsets.UTF_8)).append("+");
         }
 
         if (StringUtils.isNotBlank(noOfRepos)) {
             validateNoOfRepos();
-            uri.append("repos:").append(noOfRepos).append("+");
+            uri.append("repos:").append(URLEncoder.encode(noOfRepos, StandardCharsets.UTF_8)).append("+");
         }
 
         if (locations != null) {
             for (String loc : locations) {
                 if (StringUtils.isNotBlank(loc)) {
-                    uri.append("location:").append(loc).append("+");
+                    uri.append("location:")
+                            .append(URLEncoder.encode(loc, StandardCharsets.UTF_8)).append("+");
                 }
             }
         }
@@ -106,7 +114,8 @@ public class SearchUsers implements Callable<Integer> {
         if (languages != null) {
             for (String lang : languages) {
                 if (StringUtils.isNotBlank(lang)) {
-                    uri.append("language:").append(lang).append("+");
+                    uri.append("language:")
+                            .append(URLEncoder.encode(lang, StandardCharsets.UTF_8)).append("+");
                 }
             }
         }

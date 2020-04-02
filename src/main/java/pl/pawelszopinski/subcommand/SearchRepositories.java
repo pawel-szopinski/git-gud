@@ -3,7 +3,9 @@ package pl.pawelszopinski.subcommand;
 import org.apache.commons.lang3.StringUtils;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 import pl.pawelszopinski.handler.PrintHandler;
 import pl.pawelszopinski.option.Authenticate;
 import pl.pawelszopinski.option.Help;
@@ -14,6 +16,8 @@ import pl.pawelszopinski.result.ResultCompilerBasicInfo;
 import pl.pawelszopinski.result.paged.PagedParsedSearchResultCompiler;
 import pl.pawelszopinski.result.paged.PagedVerboseResultCompiler;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -21,7 +25,10 @@ import java.util.concurrent.Callable;
 @Command(name = "search-repos", description = "Search for GitHub repositories with different criteria.")
 public class SearchRepositories implements Callable<Integer> {
 
-    private StringBuilder uri = new StringBuilder().append("search/repositories?q=");
+    private StringBuilder uri = new StringBuilder().append("/search/repositories?q=");
+
+    @Spec
+    private CommandSpec spec;
 
     @Option(names = {"-p", "--search-phrase"}, paramLabel = "<phrase>", description = "Repository " +
             "name or README file should contain this phrase.")
@@ -67,11 +74,11 @@ public class SearchRepositories implements Callable<Integer> {
         if (verbose.isVerbose()) {
             String result = getVerboseResult(basicInfo);
 
-            PrintHandler.printString(result);
+            PrintHandler.printString(result, spec);
         } else {
             List<ParsedSearchResult<Repository>> result = getParsedResult(basicInfo);
 
-            PrintHandler.printParsedResult(result);
+            PrintHandler.printParsedResult(result, spec);
         }
 
         return 0;
@@ -102,32 +109,32 @@ public class SearchRepositories implements Callable<Integer> {
         }
 
         if (StringUtils.isNotBlank(searchPhrase)) {
-            uri.append(searchPhrase).append("+");
+            uri.append(URLEncoder.encode(searchPhrase, StandardCharsets.UTF_8)).append("+");
         }
 
         if (StringUtils.isNotBlank(userName)) {
-            uri.append("user:").append(userName).append("+");
+            uri.append("user:").append(URLEncoder.encode(userName, StandardCharsets.UTF_8)).append("+");
         }
 
         if (StringUtils.isNotBlank(orgName)) {
-            uri.append("org:").append(orgName).append("+");
+            uri.append("org:").append(URLEncoder.encode(orgName, StandardCharsets.UTF_8)).append("+");
         }
 
         if (StringUtils.isNotBlank(created)) {
             validateCreatedOptionValue();
-            uri.append("created:").append(created).append("+");
+            uri.append("created:").append(URLEncoder.encode(created, StandardCharsets.UTF_8)).append("+");
         }
 
         if (languages != null) {
             for (String lang : languages) {
                 if (StringUtils.isNotBlank(lang)) {
-                    uri.append("language:").append(lang).append("+");
+                    uri.append("language:").append(URLEncoder.encode(lang, StandardCharsets.UTF_8)).append("+");
                 }
             }
         }
 
         if (StringUtils.isNotBlank(license)) {
-            uri.append("license:").append(license).append("+");
+            uri.append("license:").append(URLEncoder.encode(license, StandardCharsets.UTF_8)).append("+");
         }
 
         uri.deleteCharAt(uri.length() - 1);

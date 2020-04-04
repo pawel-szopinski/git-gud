@@ -77,13 +77,13 @@ public class GetCommitInfo implements Callable<Integer> {
         ArrayVerboseResultCompiler resultCompiler = new ArrayVerboseResultCompiler(
                 basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
-        return resultCompiler.compileJsonResult(true);
+        return resultCompiler.compileJsonResult();
     }
 
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
         ArrayParsedResultCompiler resultCompiler = new ArrayParsedResultCompiler(
                 basicInfo, shaArray, URI_ITEM_REPLACEMENT);
 
-        return resultCompiler.compileParsedResult(Commit.class, true);
+        return resultCompiler.compileParsedResult(Commit.class);
     }
 }

@@ -1,5 +1,6 @@
 package pl.pawelszopinski.subcommand;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -8,15 +9,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockserver.integration.ClientAndServer;
 import picocli.CommandLine;
+import pl.pawelszopinski.Utils;
 import pl.pawelszopinski.config.Configuration;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
@@ -31,16 +31,9 @@ class GetBranchesTest {
 
     @BeforeAll
     void init() throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("git-gud-withtoken.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        Configuration.readFromFile(Utils.getFullResourcePath("git-gud-withtoken.properties"));
 
-        Configuration.readFromFile(propsPath);
-
-        URL rawResponseUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("branches/branches-server.json");
-        String rawResponsePath = Objects.requireNonNull(rawResponseUrl).getPath();
-
+        String rawResponsePath = Utils.getFullResourcePath("branches/branches-server.txt");
         serverResponse = new String(Files.readAllBytes(Paths.get(rawResponsePath)));
     }
 
@@ -52,10 +45,7 @@ class GetBranchesTest {
     @Test
     void testParsedResultReturnCorrectData() throws IOException {
         //given
-        URL parsedResponseUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("branches/branches-parsed.txt");
-        String parsedResponsePath = Objects.requireNonNull(parsedResponseUrl).getPath();
-
+        String parsedResponsePath = Utils.getFullResourcePath("branches/branches-parsed.txt");
         String parsedResponse = new String(Files.readAllBytes(Paths.get(parsedResponsePath)));
 
         mockServer.when(request()
@@ -76,16 +66,13 @@ class GetBranchesTest {
 
         //then
         assertEquals(0, exitCode);
-        assertEquals(parsedResponse, sw.toString());
+        assertEquals(parsedResponse, StringUtils.chomp(sw.toString()));
     }
 
     @Test
     void testVerboseResultReturnCorrectData() throws IOException {
         //given
-        URL verboseResponseUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("branches/branches-verbose.json");
-        String verboseResponsePath = Objects.requireNonNull(verboseResponseUrl).getPath();
-
+        String verboseResponsePath = Utils.getFullResourcePath("branches/branches-verbose.txt");
         String verboseResponse = new String(Files.readAllBytes(Paths.get(verboseResponsePath)));
 
         mockServer.when(request()
@@ -106,6 +93,6 @@ class GetBranchesTest {
 
         //then
         assertEquals(0, exitCode);
-        assertEquals(verboseResponse, sw.toString());
+        assertEquals(verboseResponse, StringUtils.chomp(sw.toString()));
     }
 }

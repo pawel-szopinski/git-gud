@@ -1,5 +1,6 @@
 package pl.pawelszopinski;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
@@ -21,6 +22,6 @@ class GitGudTest {
 
         //then
         assertEquals(0, exitCode);
-        assertEquals("Version: 1.0\n", sw.toString());
+        assertEquals("Version: 1.0", StringUtils.chomp(sw.toString()));
     }
 }

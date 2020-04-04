@@ -76,7 +76,7 @@ public class GetStargazers implements Callable<Integer> {
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
         PagedParsedResultCompiler resultCompiler = new PagedParsedResultCompiler(basicInfo);
 
-        return resultCompiler.compileParsedResult(User.class, false);
+        return resultCompiler.compileParsedResult(User.class);
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {

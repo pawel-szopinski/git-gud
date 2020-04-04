@@ -1,12 +1,8 @@
 package pl.pawelszopinski.config;
 
 import org.junit.jupiter.api.Test;
+import pl.pawelszopinski.Utils;
 import pl.pawelszopinski.exception.ReadPropertiesException;
-
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +22,7 @@ public class ConfigurationTest {
     @Test
     void testLoadConfigurationSuccess() {
         //given
-        String propsPath = getFullResourcePath("git-gud-withtoken.properties");
+        String propsPath = Utils.getFullResourcePath("git-gud-withtoken.properties");
 
         //when
         Configuration.readFromFile(propsPath);
@@ -41,7 +37,7 @@ public class ConfigurationTest {
     @Test
     void testMissingKeyThrowsException() {
         //given
-        String propsPath = getFullResourcePath("bad-properties/git-gud-missing-api-address.properties");
+        String propsPath = Utils.getFullResourcePath("bad-properties/git-gud-missing-api-address.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -52,7 +48,7 @@ public class ConfigurationTest {
     @Test
     void testMalformedApiAddressThrowsException() {
         //given
-        String propsPath = getFullResourcePath("bad-properties/git-gud-malformed-api-address.properties");
+        String propsPath = Utils.getFullResourcePath("bad-properties/git-gud-malformed-api-address.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -63,7 +59,7 @@ public class ConfigurationTest {
     @Test
     void testSearchLimitParseErrorThrowsException() {
         //given
-        String propsPath = getFullResourcePath("bad-properties/git-gud-search-limit-not-int.properties");
+        String propsPath = Utils.getFullResourcePath("bad-properties/git-gud-search-limit-not-int.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -74,7 +70,7 @@ public class ConfigurationTest {
     @Test
     void testSearchLimitLessThanOneThrowsException() {
         //given
-        String propsPath = getFullResourcePath("bad-properties/git-gud-search-limit-low.properties");
+        String propsPath = Utils.getFullResourcePath("bad-properties/git-gud-search-limit-low.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -85,19 +81,11 @@ public class ConfigurationTest {
     @Test
     void testInvalidTokenThrowsException() {
         //given
-        String propsPath = getFullResourcePath("bad-properties/git-gud-invalid-token.properties");
+        String propsPath = Utils.getFullResourcePath("bad-properties/git-gud-invalid-token.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
                 () -> Configuration.readFromFile(propsPath));
         assertTrue(exception.getMessage().contains("have length of exactly 40 characters"));
-    }
-
-    private String getFullResourcePath(String file) {
-        URL resource = Thread.currentThread().getContextClassLoader()
-                .getResource(file);
-
-        return URLDecoder.decode(Objects.requireNonNull(resource).getPath(),
-                StandardCharsets.UTF_8);
     }
 }

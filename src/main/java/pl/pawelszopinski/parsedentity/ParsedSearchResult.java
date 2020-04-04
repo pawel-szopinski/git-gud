@@ -25,7 +25,7 @@ public class ParsedSearchResult<T extends ParsedResult> {
         String prefix = "";
         for (T item : items) {
             sb.append(prefix);
-            prefix = "\n";
+            prefix = System.getProperty("line.separator");
             sb.append(item);
         }
 

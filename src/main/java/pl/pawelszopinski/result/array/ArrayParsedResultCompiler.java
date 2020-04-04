@@ -23,7 +23,7 @@ public class ArrayParsedResultCompiler {
         this.uriItemReplacement = uriItemReplacement;
     }
 
-    public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type, boolean searchResult)
+    public <T extends ParsedResult> List<ParsedResult> compileParsedResult(Class<T> type)
             throws Exception {
         List<ParsedResult> resultList = new ArrayList<>();
 

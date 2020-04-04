@@ -1,0 +1,18 @@
+[
+  {
+    "name":"master",
+    "commit":{
+      "sha":"9ef42fbd482321f4716c05ff341f493664119fdd",
+      "url":"https://api.github.com/repos/pawel-szopinski/git-gud/commits/9ef42fbd482321f4716c05ff341f493664119fdd"
+    },
+    "protected":false
+  },
+  {
+    "name":"review",
+    "commit":{
+      "sha":"6c42edf527e50731fbfe4359faee86dffe1ff29b",
+      "url":"https://api.github.com/repos/pawel-szopinski/git-gud/commits/6c42edf527e50731fbfe4359faee86dffe1ff29b"
+    },
+    "protected":false
+  }
+]

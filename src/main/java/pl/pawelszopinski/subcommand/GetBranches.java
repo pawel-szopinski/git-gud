@@ -76,7 +76,7 @@ public class GetBranches implements Callable<Integer> {
     private List<ParsedResult> getParsedResult(ResultCompilerBasicInfo basicInfo) throws Exception {
         PagedParsedResultCompiler resultCompiler = new PagedParsedResultCompiler(basicInfo);
 
-        return resultCompiler.compileParsedResult(Branch.class, false);
+        return resultCompiler.compileParsedResult(Branch.class);
     }
 
     private String getVerboseResult(ResultCompilerBasicInfo basicInfo) throws Exception {

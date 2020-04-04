@@ -18,15 +18,18 @@ public class ArrayVerboseResultCompiler {
         this.uriItemReplacement = uriItemReplacement;
     }
 
-    public String compileJsonResult(boolean searchResult) throws Exception {
+    public String compileJsonResult() throws Exception {
         StringBuilder result = new StringBuilder();
 
         for (String item : items) {
-            result.append("\n\n").append("item: ").append(item).append("\n")
+            result.append(System.getProperty("line.separator"))
+                    .append(System.getProperty("line.separator"))
+                    .append("item: ").append(item)
+                    .append(System.getProperty("line.separator"))
                     .append(getSingleItemResult(item));
         }
 
-        return result.toString().substring(2);
+        return result.toString().trim();
     }
 
     private String getSingleItemResult(String item) throws Exception {

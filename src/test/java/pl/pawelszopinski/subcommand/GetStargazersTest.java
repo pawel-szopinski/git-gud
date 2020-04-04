@@ -1,5 +1,6 @@
 package pl.pawelszopinski.subcommand;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -8,15 +9,14 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockserver.integration.ClientAndServer;
 import picocli.CommandLine;
+import pl.pawelszopinski.Utils;
 import pl.pawelszopinski.config.Configuration;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
@@ -33,31 +33,18 @@ class GetStargazersTest {
 
     @BeforeAll
     static void loadProperties() {
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("git-gud-withtoken.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
-
-        Configuration.readFromFile(propsPath);
+        Configuration.readFromFile(Utils.getFullResourcePath("git-gud-withtoken.properties"));
     }
 
     @BeforeAll
     void loadServerResponses() throws IOException {
-        URL rawResponseSingleUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("stargazers/single-server.json");
-        String rawResponseSinglePath = Objects.requireNonNull(rawResponseSingleUrl).getPath();
-
+        String rawResponseSinglePath = Utils.getFullResourcePath("stargazers/single-server.txt");
         serverResponseSingle = new String(Files.readAllBytes(Paths.get(rawResponseSinglePath)));
 
-        URL rawResponseMultiPage1Url = Thread.currentThread().getContextClassLoader()
-                .getResource("stargazers/multi1-server.json");
-        String rawResponseMultiPage1Path = Objects.requireNonNull(rawResponseMultiPage1Url).getPath();
-
+        String rawResponseMultiPage1Path = Utils.getFullResourcePath("stargazers/multi1-server.txt");
         serverResponseMultiPage1 = new String(Files.readAllBytes(Paths.get(rawResponseMultiPage1Path)));
 
-        URL rawResponseMultiPage2Url = Thread.currentThread().getContextClassLoader()
-                .getResource("stargazers/multi2-server.json");
-        String rawResponseMultiPage2Path = Objects.requireNonNull(rawResponseMultiPage2Url).getPath();
-
+        String rawResponseMultiPage2Path = Utils.getFullResourcePath("stargazers/multi2-server.txt");
         serverResponseMultiPage2 = new String(Files.readAllBytes(Paths.get(rawResponseMultiPage2Path)));
     }
 
@@ -69,10 +56,7 @@ class GetStargazersTest {
     @Test
     void testSingleVerboseResultReturnCorrectData() throws IOException {
         //given
-        URL verboseResponseUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("stargazers/single-verbose.txt");
-        String verboseResponsePath = Objects.requireNonNull(verboseResponseUrl).getPath();
-
+        String verboseResponsePath = Utils.getFullResourcePath("stargazers/single-verbose.txt");
         String verboseResponse = new String(Files.readAllBytes(Paths.get(verboseResponsePath)));
 
         mockServer.when(request()
@@ -94,16 +78,13 @@ class GetStargazersTest {
 
         //then
         assertEquals(0, exitCode);
-        assertEquals(verboseResponse, sw.toString());
+        assertEquals(verboseResponse, StringUtils.chomp(sw.toString()));
     }
 
     @Test
     void testMultiVerboseResultReturnCorrectData() throws IOException {
         //given
-        URL verboseResponseUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("stargazers/multi-verbose.txt");
-        String verboseResponsePath = Objects.requireNonNull(verboseResponseUrl).getPath();
-
+        String verboseResponsePath = Utils.getFullResourcePath("stargazers/multi-verbose.txt");
         String verboseResponse = new String(Files.readAllBytes(Paths.get(verboseResponsePath)));
 
         mockServer.when(request()
@@ -139,16 +120,13 @@ class GetStargazersTest {
 
         //then
         assertEquals(0, exitCode);
-        assertEquals(verboseResponse, sw.toString());
+        assertEquals(verboseResponse, StringUtils.chomp(sw.toString()));
     }
 
     @Test
     void testMultiParsedSortedResultReturnCorrectData() throws IOException {
         //given
-        URL responseUrl = Thread.currentThread().getContextClassLoader()
-                .getResource("stargazers/multi-parsed.txt");
-        String responsePath = Objects.requireNonNull(responseUrl).getPath();
-
+        String responsePath = Utils.getFullResourcePath("stargazers/multi-parsed.txt");
         String response = new String(Files.readAllBytes(Paths.get(responsePath)));
 
         mockServer.when(request()
@@ -184,6 +162,6 @@ class GetStargazersTest {
 
         //then
         assertEquals(0, exitCode);
-        assertEquals(response, sw.toString());
+        assertEquals(response, StringUtils.chomp(sw.toString()));
     }
 }

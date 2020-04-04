@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import pl.pawelszopinski.exception.ReadPropertiesException;
 
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,15 +20,13 @@ public class ConfigurationTest {
                 () -> Configuration.readFromFile("X"));
 
         //then
-        assertTrue(exception.getMessage().endsWith("(No such file or directory)"));
+        assertTrue(exception.getMessage().startsWith("Could not read application properties file"));
     }
 
     @Test
     void testLoadConfigurationSuccess() {
         //given
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("git-gud-withtoken.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        String propsPath = getFullResourcePath("git-gud-withtoken.properties");
 
         //when
         Configuration.readFromFile(propsPath);
@@ -41,9 +41,7 @@ public class ConfigurationTest {
     @Test
     void testMissingKeyThrowsException() {
         //given
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("bad-properties/git-gud-missing-api-address.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        String propsPath = getFullResourcePath("bad-properties/git-gud-missing-api-address.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -54,9 +52,7 @@ public class ConfigurationTest {
     @Test
     void testMalformedApiAddressThrowsException() {
         //given
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("bad-properties/git-gud-malformed-api-address.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        String propsPath = getFullResourcePath("bad-properties/git-gud-malformed-api-address.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -67,9 +63,7 @@ public class ConfigurationTest {
     @Test
     void testSearchLimitParseErrorThrowsException() {
         //given
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("bad-properties/git-gud-search-limit-not-int.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        String propsPath = getFullResourcePath("bad-properties/git-gud-search-limit-not-int.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -80,9 +74,7 @@ public class ConfigurationTest {
     @Test
     void testSearchLimitLessThanOneThrowsException() {
         //given
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("bad-properties/git-gud-search-limit-low.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        String propsPath = getFullResourcePath("bad-properties/git-gud-search-limit-low.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
@@ -93,13 +85,19 @@ public class ConfigurationTest {
     @Test
     void testInvalidTokenThrowsException() {
         //given
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource("bad-properties/git-gud-invalid-token.properties");
-        String propsPath = Objects.requireNonNull(url).getPath();
+        String propsPath = getFullResourcePath("bad-properties/git-gud-invalid-token.properties");
 
         //then
         Exception exception = assertThrows(ReadPropertiesException.class,
                 () -> Configuration.readFromFile(propsPath));
         assertTrue(exception.getMessage().contains("have length of exactly 40 characters"));
+    }
+
+    private String getFullResourcePath(String file) {
+        URL resource = Thread.currentThread().getContextClassLoader()
+                .getResource(file);
+
+        return URLDecoder.decode(Objects.requireNonNull(resource).getPath(),
+                StandardCharsets.UTF_8);
     }
 }

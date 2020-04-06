@@ -1,6 +1,5 @@
 package pl.pawelszopinski.subcommand;
 
-import org.apache.http.HttpException;
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -14,7 +13,6 @@ import pl.pawelszopinski.option.Repository;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.concurrent.Callable;
 
 @Command(name = "star-repo", description = "Star a repository. " +
@@ -48,12 +46,11 @@ public class StarRepository implements Callable<Integer> {
         int statusCode = httpRequest.sendPut(uri);
 
         if (statusCode != 204) {
-            throw new HttpException(MessageFormat.format(
-                    "Error: {0} {1}", statusCode,
-                    EnglishReasonPhraseCatalog.INSTANCE.getReason(statusCode, null)));
+            PrintHandler.printString("Request Failed: " + statusCode + " " +
+                    EnglishReasonPhraseCatalog.INSTANCE.getReason(statusCode, null) + ".", spec);
+        } else {
+            PrintHandler.printString("You are now starring this repository.", spec);
         }
-
-        PrintHandler.printString("Repository has been starred successfully.", spec);
 
         return 0;
     }

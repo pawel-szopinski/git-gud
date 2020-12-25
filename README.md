@@ -56,7 +56,7 @@ $ java -jar git-gud-1.0.jar
 
 ---
 
-## The app was build with
+## The app was built with
 - [picocli](https://github.com/remkop/picocli) - Command line interface
 - [Maven](https://maven.apache.org/) - Dependency Management
 - [json-io](https://github.com/jdereg/json-io) - JSON formatting for verbose output
